@@ -28,7 +28,7 @@ public class FacturasTabla extends JTable {
 			new Object[][] {
 				{null, null, null, null, null},
 			},
-			new String[] {		
+			new String[] {
 				"Factura", "Fecha", "Cliente", "Importe Total", "Cobrada"
 			}
 		) {
@@ -39,12 +39,17 @@ public class FacturasTabla extends JTable {
 				return columnTypes[columnIndex];
 			}
 			boolean[] columnEditables = new boolean[] {
-				false, false
+				true, false, false, false, false
 			};
 			public boolean isCellEditable(int row, int column) {
 				return columnEditables[column];
 			}
 		});
+		getColumnModel().getColumn(2).setPreferredWidth(300);
+		getColumnModel().getColumn(2).setMinWidth(50);
+		getColumnModel().getColumn(4).setPreferredWidth(60);
+		getColumnModel().getColumn(4).setMinWidth(60);
+		getColumnModel().getColumn(4).setMaxWidth(60);
 		setAutoCreateRowSorter(true);
 		
 		addMouseListener(new MouseAdapter() {
@@ -53,7 +58,7 @@ public class FacturasTabla extends JTable {
 				int row = getSelectedRow();
 				if (row != -1) {
 					Factura fac = (Factura) getValueAt(row, 0);
-					FacturaDialogo dialog = new FacturaDialogo(fac);
+					FacturaCompletaDialogo dialog = new FacturaCompletaDialogo(fac);
 					Factura f = dialog.mostrar();
 					if (f != null) {
 						actualizarTabla(fil);
@@ -66,10 +71,12 @@ public class FacturasTabla extends JTable {
 	public void actualizarTabla(String filtro) {
 		this.setFiltro(filtro);
 		ArrayList<Vector<Object>> tabla = new FacturasBDD().recuperaTablaFacturas(filtro);
-		DefaultTableModel dtm = (DefaultTableModel) getModel();
-		dtm.setRowCount(0);
-		for (Vector<Object> fila : tabla) {
-			dtm.addRow(fila);
+		if (tabla!=null) {
+			DefaultTableModel dtm = (DefaultTableModel) getModel();
+			dtm.setRowCount(0);
+			for (Vector<Object> fila : tabla) {
+				dtm.addRow(fila);
+			}
 		}
 	}
 

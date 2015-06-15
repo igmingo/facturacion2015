@@ -29,7 +29,7 @@ public class FacturasBDD {
 	public ArrayList<Factura> recuperaFacturaCompletaPorFiltro(String filtro) {
 		String sql = "";
 		sql += "SELECT * FROM facturas WHERE ";
-		sql += filtro;
+		sql += filtro!=null && filtro.length()==0?"1":filtro;
 		sql += " ORDER BY facturas.numero";
 		System.out.println(sql);
 		ArrayList<Factura> lista = null;
@@ -383,36 +383,26 @@ public class FacturasBDD {
 	 * @param filtro
 	 * @return devuelve datos Jtabla, es decir una array de vectores, ArrayList<Vector<Object>>
 	 */
-	public ArrayList<Vector<Object>> recuperaTablaFacturas(String txtFiltro) {			
+	public ArrayList<Vector<Object>> recuperaTablaFacturas(String txtFiltro) {
+		//"Factura", "Fecha", "Cliente", "Importe Total", "Cobrada"
 		ArrayList<String> filtros = new ArrayList<>();
 		filtros.add("facturas.numero LIKE '%" + txtFiltro + "%'");
 		filtros.add("facturas.nombreCliente LIKE '%" + txtFiltro + "%'");
-		String filtro = creaFiltro(filtros);
+		String filtro = Utilidades.creaFiltro(filtros);
 		ArrayList<Factura> lista = recuperaFacturaSimplePorFiltro(filtro);		
-				
-		ArrayList<Vector<Object>> tableData = new ArrayList<>();
-		for (Factura factura : lista) {
-			Vector<Object> filaData = new Vector<>();
-			filaData.add(factura);
-			filaData.add(factura.getFecha());
-			filaData.add(factura.getNombreCliente());
-			filaData.add(factura.getImpTotal());
-			filaData.add(factura.isCobrada());
-			tableData.add(filaData);
+		ArrayList<Vector<Object>> tableData = null;
+		if (lista!=null && lista.size()>0) {
+			tableData = new ArrayList<>();
+			for (Factura factura : lista) {
+				Vector<Object> filaData = new Vector<>();
+				filaData.add(factura);
+				filaData.add(factura.getFecha());
+				filaData.add(factura.getNombreCliente());
+				filaData.add(factura.getImpTotal());
+				filaData.add(factura.isCobrada());
+				tableData.add(filaData);
+			}
 		}
 		return tableData;
 	}
-	
-	private String creaFiltro(ArrayList<String> filtros) {
-		String stringFiltro = "";
-		for (int i = 0; i < filtros.size()-1 ; i++) {
-			String filtro = filtros.get(i);
-			stringFiltro += filtro;
-			stringFiltro += " AND ";
-		}
-		String filtro = filtros.get(filtros.size()-1);
-		stringFiltro += filtro;
-		return stringFiltro;
-	}
-	
 }

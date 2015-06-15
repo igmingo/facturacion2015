@@ -10,10 +10,6 @@ public class ProductosCombo extends JComboBox<Producto> {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public void recargarCombo() {
-		recargarCombo(0);
-	}
-	
 	public int getSelectedId() {
 		//Devuelve el ID del Genero selecionado en el Combo
 		return getItemAt(getSelectedIndex()).getId();
@@ -41,6 +37,22 @@ public class ProductosCombo extends JComboBox<Producto> {
 				pos++;
 			}
 		}
+	}
+	
+	public void recargarCombo(String txtFiltro) {
+		removeAllItems();
+		ArrayList<String> filtros = new ArrayList<>();
+		filtros.add("productos.nombre LIKE '%" + txtFiltro + "%'");
+		String filtro = Utilidades.creaFiltro(filtros);
+		ArrayList<Producto> lista = new ProductosBDD().recuperaPorFiltro(filtro);
+		for (Producto p : lista) {
+			addItem(p);
+		}
+		setSelectedIndex(0);
+	}
+	
+	public void recargarCombo() {
+		recargarCombo(0);
 	}
 
 }

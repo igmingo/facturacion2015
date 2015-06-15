@@ -21,8 +21,10 @@ public class ProductosBDD {
 	//METODO PUBLICO
 	
 	public ArrayList<Producto> recuperaPorFiltro(String filtro) {
-		String sql = "SELECT * FROM productos " + filtro
-				+ " ORDER BY productos.id";
+		String sql = "";
+		sql += "SELECT * FROM productos WHERE ";
+		sql += filtro!=null?filtro:"1";
+		sql += " ORDER BY productos.id";
 		System.out.println(sql);
 		ArrayList<Producto> lista = new ArrayList<>();
 		Connection c = new Conexion().getConection();
@@ -60,7 +62,7 @@ public class ProductosBDD {
 	}
 	
 	public ArrayList<Producto> recuperaTodos(){
-		return recuperaPorFiltro("WHERE 1");
+		return recuperaPorFiltro(null);
 	}
 	
 	public Producto recuperaPorId(int id){

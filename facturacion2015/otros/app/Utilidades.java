@@ -2,6 +2,7 @@ package app;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Utilidades {
@@ -81,6 +82,18 @@ public class Utilidades {
 	public static String fechaToSQL (Date fecha) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		return sdf.format(fecha);
+	}
+	
+	public static String creaFiltro (ArrayList<String> filtros) {
+		String stringFiltro = "";
+		for (int i = 0; i < filtros.size()-1 ; i++) {
+			String filtro = filtros.get(i);
+			stringFiltro += filtro;
+			stringFiltro += " AND ";
+		}
+		String filtro = filtros.get(filtros.size()-1);
+		stringFiltro += filtro;
+		return stringFiltro;
 	}
 	
 }

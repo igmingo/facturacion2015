@@ -230,7 +230,7 @@ public class FacturaDetalleDialogo extends JDialog {
 		if (fd!=null && fd.getId()>0) {
 			txtId.setText("" + fd.getId());
 			txtFacturaId.setText("" + fd.getFacturaId());
-			cbProd.setSelectedId(fd.getProdId());
+			cbProd.setSelectedProductoId(fd.getProdId());
 			txtProdNombre.setText(fd.getProdNombre());
 			numProdPrecio.setValue(fd.getProdPrecio());
 			numProdIva.setValue(fd.getProdIva());
@@ -238,7 +238,7 @@ public class FacturaDetalleDialogo extends JDialog {
 		} else {
 			txtId.setText("0");
 			txtFacturaId.setText("");
-			cbProd.setSelectedId(null);
+			cbProd.setSelectedProductoId(null);
 			txtProdNombre.setText("");
 			numProdPrecio.setValue(0);
 			numProdIva.setValue(0);
@@ -262,7 +262,7 @@ public class FacturaDetalleDialogo extends JDialog {
 
 		int id = Utilidades.validarEntero(txtId.getText());
 		int facturaId = Utilidades.validarEntero(txtFacturaId.getText());
-		int prodId = cbProd.getSelectedId();
+		int prodId = cbProd.getSelectedProductoId();
 		String prodNombre = Utilidades.validarString(txtProdNombre.getText());
 		Double prodPrecio = Utilidades.validarDouble(""	+ numProdPrecio.getValue());
 		Double prodIva = Utilidades.validarDouble("" + numProdIva.getValue());

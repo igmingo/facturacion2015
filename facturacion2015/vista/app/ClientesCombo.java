@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import javax.swing.JComboBox;
 
 public class ClientesCombo extends JComboBox<Cliente> {
+	public ClientesCombo() {
+		setEditable(true);
+	}
 	/**
 	 * 
 	 */

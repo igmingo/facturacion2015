@@ -1,23 +1,47 @@
 package app;
 
 import java.util.ArrayList;
-
 import javax.swing.JComboBox;
+import javax.swing.JTextField;
+import javax.swing.event.PopupMenuListener;
+import javax.swing.event.PopupMenuEvent;
 
 public class ProductosCombo extends JComboBox<Producto> {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private String cbFiltro;
 	
-	public int getSelectedId() {
-		//Devuelve el ID del Genero selecionado en el Combo
+	public ProductosCombo() {
+		cbFiltro = "";
+		setEditable(true);
+		setSelectedIndex(-1);
+		
+		addPopupMenuListener(new PopupMenuListener() {
+			public void popupMenuCanceled(PopupMenuEvent e) {
+			}
+			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+			}
+			public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+				setFiltro(((JTextField) getEditor().getEditorComponent()).getText());
+			}
+		});
+		
+	}
+	
+	/**Recupera el Id del Producto seleccionado
+	 * @return Devuelve un entero con el ProductoId selecionado en el Combo
+	 */
+	public int getSelectedProductoId() {
 		return getItemAt(getSelectedIndex()).getId();
 	}
 	
-	public void setSelectedId(Integer idProducto) {
-		//Devuelve el ID del Genero selecionado en el Combo
-		recargarCombo(idProducto);
+	/**Pone como Seleccionado del Producto con el ProductoId
+	 * @param productoId
+	 */
+	public void setSelectedProductoId(Integer productoId) {
+		recargarCombo(productoId);
 	}
 	
 	/**Carga todos los Generos del Repositorio ProductosBDD, y deja seleccionado el que tiene el idProducto
@@ -28,31 +52,55 @@ public class ProductosCombo extends JComboBox<Producto> {
 			int idSel = idProducto;
 			int pos = 0;
 			removeAllItems();
-			ArrayList<Producto> lista = new ProductosBDD().recuperaTodos();
-			for (Producto p : lista) {
-				addItem(p);
-				if (p.getId() == idSel) {
-					setSelectedIndex(pos);
+			ArrayList<Producto> lista = new ProductosBDD().recuperaPorFiltro("productos.id =" + idProducto);
+			if (lista!=null) {
+				for (Producto p : lista) {
+					addItem(p);
+					if (p.getId() == idSel) {
+						setSelectedIndex(pos);
+					}
+					pos++;
 				}
-				pos++;
 			}
 		}
 	}
 	
-	public void recargarCombo(String txtFiltro) {
+	public void recargarCombo() {
 		removeAllItems();
-		ArrayList<String> filtros = new ArrayList<>();
-		filtros.add("productos.nombre LIKE '%" + txtFiltro + "%'");
-		String filtro = Utilidades.creaFiltro(filtros);
-		ArrayList<Producto> lista = new ProductosBDD().recuperaPorFiltro(filtro);
-		for (Producto p : lista) {
-			addItem(p);
+		ArrayList<Producto> lista = new ProductosBDD().recuperaPorFiltro(null);
+		if (lista!=null) {
+			for (Producto p : lista) {
+				addItem(p);
+			}
+			setSelectedIndex(-1);
 		}
-		setSelectedIndex(0);
 	}
 	
-	public void recargarCombo() {
-		recargarCombo(0);
+	public void recargarComboFiltrado() {
+		removeAllItems();
+		ArrayList<String> filtros = new ArrayList<>();
+		filtros.add("productos.nombre LIKE '%" + cbFiltro + "%'");
+		String filtroString = Utilidades.creaFiltro(filtros);
+		ArrayList<Producto> lista = new ProductosBDD().recuperaPorFiltro(filtroString);
+		if (lista!=null) {
+			for (Producto p : lista) {
+				addItem(p);
+			}
+			setSelectedIndex(lista.size()-1);
+		}
 	}
+
+	public String getFiltro() {
+		return cbFiltro;
+	}
+
+	public void setFiltro(String f) {
+		this.cbFiltro = f;
+		recargarComboFiltrado();
+	}
+	
+//	public void recargarCombo() {
+//		recargarCombo("");
+//	}
 
 }

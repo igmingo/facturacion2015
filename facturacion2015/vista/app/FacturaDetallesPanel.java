@@ -30,10 +30,6 @@ import javax.swing.SwingConstants;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.InputMethodListener;
-import java.awt.event.InputMethodEvent;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 
 
 public class FacturaDetallesPanel extends JPanel {
@@ -41,24 +37,22 @@ public class FacturaDetallesPanel extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JTable t;
+	private JTable prodTabla;
 	private ProductosCombo cbProducto;
 	private JSpinner numCantidad;
 	private JTextField txtTotal;
 	private int facturaId;
 	
-	DefaultTableModel dtm;
-	private JTextField txtFiltroProducto;
+//	private DefaultTableModel dtm;
 	
-	public FacturaDetallesPanel(int fId) {
-		this.facturaId = fId;
+	public FacturaDetallesPanel(int facId) {
+		this.facturaId = facId;
 		//setBounds(new Rectangle(0, 0, 550, 300));
 		setLayout(new BorderLayout(0, 0));
 		
 		JPanel form = new JPanel();
 		add(form, BorderLayout.NORTH);
 		form.setLayout(new FormLayout(new ColumnSpec[] {
-				ColumnSpec.decode("15dlu:grow"),
 				ColumnSpec.decode("default:grow(3)"),
 				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
 				FormFactory.DEFAULT_COLSPEC,
@@ -69,44 +63,34 @@ public class FacturaDetallesPanel extends JPanel {
 			new RowSpec[] {
 				FormFactory.DEFAULT_ROWSPEC,}));
 		
-		txtFiltroProducto = new JTextField();
-		txtFiltroProducto.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusLost(FocusEvent arg0) {
-				cbProducto.recargarCombo(txtFiltroProducto.getText().trim());
-			}
-		});
-		txtFiltroProducto.setText("filtro");
-		form.add(txtFiltroProducto, "1, 1, fill, center");
-		txtFiltroProducto.setColumns(10);
-		
 		cbProducto = new ProductosCombo();
-		form.add(cbProducto, "2, 1, fill, default");
+		form.add(cbProducto, "1, 1, fill, default");
 		
 		JLabel lblCantidad = new JLabel("Cantidad");
-		form.add(lblCantidad, "4, 1, right, default");
+		form.add(lblCantidad, "3, 1, right, default");
 		
 		numCantidad = new JSpinner();
 		numCantidad.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
-		form.add(numCantidad, "5, 1, fill, default");
+		form.add(numCantidad, "4, 1, fill, default");
 		
-		JButton btnAdd = new JButton("A\u00F1adir");
-		form.add(btnAdd, "7, 1, fill, center");
+		JButton btnAgregar = new JButton("Agregar");
+		form.add(btnAgregar, "6, 1, fill, center");
 		
 		JButton btnEliminar = new JButton("Eliminar");
 		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				eliminarFilaSeleccionada(t);
+				eliminarFilaSeleccionada(prodTabla);
 			}
 		});
-		form.add(btnEliminar, "8, 1, fill, center");
+		form.add(btnEliminar, "7, 1, fill, center");
 		
 		//BOTONES
-		btnAdd.addActionListener(new ActionListener() {
+		btnAgregar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Producto producto = (Producto) cbProducto.getSelectedItem();
 				FacturaDetalle fd = new FacturaDetalle(0, facturaId, producto.getId(), producto.getNombre(), producto.getPrecio(), producto.getIva(), (int) numCantidad.getValue());
 				insertarFacturaDetalle(fd);
+				cbProducto.setSelectedIndex(-1);
 				//SpinnerNumberModel a = (SpinnerNumberModel) numCantidad.getModel();
 				//numCantidad.setValue(a.getMinimum());
 			}
@@ -115,23 +99,13 @@ public class FacturaDetallesPanel extends JPanel {
 		JScrollPane pnTable = new JScrollPane();
 		add(pnTable, BorderLayout.CENTER);
 		
-		t = new JTable();
-		t.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				System.out.println(e);
-				if (e.getKeyChar()==KeyEvent.VK_DELETE || e.getKeyChar()==KeyEvent.VK_BACK_SPACE) {
-					JTable t = (JTable) e.getSource();
-					eliminarFilaSeleccionada(t);
-				}
-			}
-		});
-		t.setModel(new DefaultTableModel(
+		prodTabla = new JTable();
+		prodTabla.setModel(new DefaultTableModel(
 			new Object[][] {
 				{null, null, null, null},
 			},
 			new String[] {
-				"Detalle", "Precio", "IVA", "Cantidad"
+				"Producto", "Precio", "IVA", "Cantidad"
 			}
 		) {
 			Class[] columnTypes = new Class[] {
@@ -141,11 +115,21 @@ public class FacturaDetallesPanel extends JPanel {
 				return columnTypes[columnIndex];
 			}
 		});
-		t.getColumnModel().getColumn(0).setMinWidth(120);
-		t.getColumnModel().getColumn(1).setPreferredWidth(70);
-		t.getColumnModel().getColumn(1).setMinWidth(70);
-		t.getColumnModel().getColumn(1).setMaxWidth(100);
-		pnTable.setViewportView(t);
+		prodTabla.getColumnModel().getColumn(0).setMinWidth(120);
+		prodTabla.getColumnModel().getColumn(1).setPreferredWidth(70);
+		prodTabla.getColumnModel().getColumn(1).setMinWidth(70);
+		prodTabla.getColumnModel().getColumn(1).setMaxWidth(100);
+		prodTabla.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				System.out.println(e);
+				if (e.getKeyChar()==KeyEvent.VK_DELETE || e.getKeyChar()==KeyEvent.VK_BACK_SPACE) {
+					JTable t = (JTable) e.getSource();
+					eliminarFilaSeleccionada(t);
+				}
+			}
+		});
+		pnTable.setViewportView(prodTabla);
 		
 		JPanel pnButtons = new JPanel();
 		add(pnButtons, BorderLayout.SOUTH);
@@ -161,7 +145,7 @@ public class FacturaDetallesPanel extends JPanel {
 		JButton btnBorrarTabla = new JButton("Borrar Tabla");
 		btnBorrarTabla.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				vaciar(t);
+				vaciar(prodTabla);
 			}
 		});
 		pnButtons.add(btnBorrarTabla, "1, 1");
@@ -171,7 +155,7 @@ public class FacturaDetallesPanel extends JPanel {
 		btnTotalizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				int suma = 0;
-				DefaultTableModel dtm = (DefaultTableModel) t.getModel();
+				DefaultTableModel dtm = (DefaultTableModel) prodTabla.getModel();
 				for (int i = 0; i < dtm.getRowCount(); i++) {
 					suma += (int) dtm.getValueAt(i, 1);
 				}
@@ -189,7 +173,8 @@ public class FacturaDetallesPanel extends JPanel {
 		pnButtons.add(txtTotal, "5, 1, right, fill");
 		txtTotal.setColumns(10);
 		
-		vaciar(t);
+		//ACCIONES A REALIZAR AL INICIAR
+		vaciar(prodTabla);
 		cbProducto.recargarCombo();
 	}
 
@@ -214,19 +199,19 @@ public class FacturaDetallesPanel extends JPanel {
 		filaData.add(fd.getProdPrecio());
 		filaData.add(fd.getProdIva());
 		filaData.add(fd.getCantidad());
-		DefaultTableModel datos = (DefaultTableModel) t.getModel();
+		DefaultTableModel datos = (DefaultTableModel) prodTabla.getModel();
 		datos.addRow(filaData);
 	}
 	
 	public void putListaDetalles(ArrayList<FacturaDetalle> listaDetalles) {
-		vaciar(t);
+		vaciar(prodTabla);
 		for (FacturaDetalle fd : listaDetalles) {
 			insertarFacturaDetalle(fd);
 		}
 	}
 	
 	public ArrayList<FacturaDetalle> getListaDetalles() {
-		DefaultTableModel datos = (DefaultTableModel) t.getModel();
+		DefaultTableModel datos = (DefaultTableModel) prodTabla.getModel();
 		ArrayList<FacturaDetalle> listaDetalles = new ArrayList<>();
 		for (int i = 0; i < datos.getRowCount(); i++) {
 			FacturaDetalle fd = (FacturaDetalle) datos.getValueAt(i, 0);

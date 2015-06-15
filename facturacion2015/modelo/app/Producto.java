@@ -76,14 +76,10 @@ public class Producto {
 		this.baja = baja;
 	}
 
-
 	@Override
 	public String toString() {
 		return nombre;
 	}
-	
-	
-
 
 }
 

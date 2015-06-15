@@ -72,7 +72,8 @@ public class FacturaCompletaDialogo extends JDialog {
 	private JTextField txtDirFactura;
 	private JTextField txtDirEnvio;
 	private JCheckBox chkbxCobrada;
-	private FacturasDetalleTabla tbFacturaDetalles;
+	//private FacturasDetalleTabla tbFacturaDetalles;
+	private FacturaDetallesPanel pnProductos;
 	private JTextField txtNombreCliente;
 
 	public FacturaCompletaDialogo(Factura fac) {
@@ -166,7 +167,7 @@ public class FacturaCompletaDialogo extends JDialog {
 		
 		JLabel lblProductos = new JLabel("Productos");
 		panel.add(lblProductos, "2, 6, right, default");
-		FacturaDetallesPanel pnProductos = new FacturaDetallesPanel(factura.getId());
+		pnProductos = new FacturaDetallesPanel(factura.getId());
 		
 		//JPanel pnProductos = new JPanel();
 		panel.add(pnProductos, "4, 6, fill, fill");
@@ -404,7 +405,8 @@ public class FacturaCompletaDialogo extends JDialog {
 		String dirFactura = txtDirFactura.getText().trim();
 		String dirEnvio = txtDirEnvio.getText().trim();
 		Boolean cobrada = chkbxCobrada.isSelected();
-		ArrayList<FacturaDetalle> detalles = tbFacturaDetalles.getListaDetalles();
+		ArrayList<FacturaDetalle> detalles = pnProductos.getListaDetalles();
+		//ArrayList<FacturaDetalle> detalles = tbFacturaDetalles.getListaDetalles();
 		try {
 			fac = new Factura(id, clienteId, nombreCliente, numero, fecha, porcDescuento, porcRecargoEquivalencia, impTotal, impRecargo, impIva, dirCorreo, dirFactura, dirEnvio, cobrada, detalles);
 		} catch (Exception e) {

@@ -23,7 +23,7 @@ public class ProductosBDD {
 	public ArrayList<Producto> recuperaPorFiltro(String filtro) {
 		String sql = "";
 		sql += "SELECT * FROM productos WHERE ";
-		sql += filtro!=null?filtro:"1";
+		sql += filtro==null || filtro.length()==0?"1":filtro;
 		sql += " ORDER BY productos.id";
 		System.out.println(sql);
 		ArrayList<Producto> lista = new ArrayList<>();

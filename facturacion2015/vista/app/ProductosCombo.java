@@ -14,7 +14,7 @@ public class ProductosCombo extends JComboBox<Producto> {
 	private String cbFiltro;
 	
 	public ProductosCombo() {
-		cbFiltro = "";
+		cbFiltro = null;
 		setEditable(true);
 		setSelectedIndex(-1);
 		
@@ -24,7 +24,13 @@ public class ProductosCombo extends JComboBox<Producto> {
 			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 			}
 			public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-				setFiltro(((JTextField) getEditor().getEditorComponent()).getText());
+				if (cbFiltro!=null && cbFiltro.length()>0){
+					setFiltro(((JTextField) getEditor().getEditorComponent()).getText());
+					recargarComboFiltrado();
+				} else {
+					setFiltro(((JTextField) getEditor().getEditorComponent()).getText());
+					recargarComboFiltrado();
+				}
 			}
 		});
 		
@@ -96,7 +102,6 @@ public class ProductosCombo extends JComboBox<Producto> {
 
 	public void setFiltro(String f) {
 		this.cbFiltro = f;
-		recargarComboFiltrado();
 	}
 	
 //	public void recargarCombo() {

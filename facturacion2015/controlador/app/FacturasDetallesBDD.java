@@ -96,6 +96,7 @@ public class FacturasDetallesBDD {
 					"WHERE facturasdetalle.id = " + fd.getId()
 					;
 		}
+		System.out.println(sql);
 		return sql;
 	}
 	

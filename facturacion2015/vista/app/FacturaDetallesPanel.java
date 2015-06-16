@@ -30,6 +30,8 @@ import javax.swing.SwingConstants;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 
 public class FacturaDetallesPanel extends JPanel {
@@ -40,8 +42,9 @@ public class FacturaDetallesPanel extends JPanel {
 	private JTable prodTabla;
 	private ProductosCombo cbProducto;
 	private JSpinner numCantidad;
-	private JTextField txtTotal;
+	private JTextField txtIvas;
 	private int facturaId;
+	private JTextField txtBases;
 	
 //	private DefaultTableModel dtm;
 	
@@ -77,24 +80,8 @@ public class FacturaDetallesPanel extends JPanel {
 		form.add(btnAgregar, "6, 1, fill, center");
 		
 		JButton btnEliminar = new JButton("Eliminar");
-		btnEliminar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				eliminarFilaSeleccionada(prodTabla);
-			}
-		});
+
 		form.add(btnEliminar, "7, 1, fill, center");
-		
-		//BOTONES
-		btnAgregar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				Producto producto = (Producto) cbProducto.getSelectedItem();
-				FacturaDetalle fd = new FacturaDetalle(0, facturaId, producto.getId(), producto.getNombre(), producto.getPrecio(), producto.getIva(), (int) numCantidad.getValue());
-				insertarFacturaDetalle(fd);
-				cbProducto.setSelectedIndex(-1);
-				//SpinnerNumberModel a = (SpinnerNumberModel) numCantidad.getModel();
-				//numCantidad.setValue(a.getMinimum());
-			}
-		});
 		
 		JScrollPane pnTable = new JScrollPane();
 		add(pnTable, BorderLayout.CENTER);
@@ -119,6 +106,52 @@ public class FacturaDetallesPanel extends JPanel {
 		prodTabla.getColumnModel().getColumn(1).setPreferredWidth(70);
 		prodTabla.getColumnModel().getColumn(1).setMinWidth(70);
 		prodTabla.getColumnModel().getColumn(1).setMaxWidth(100);
+		pnTable.setViewportView(prodTabla);
+		
+		JPanel pnButtons = new JPanel();
+		add(pnButtons, BorderLayout.SOUTH);
+		pnButtons.setLayout(new FormLayout(new ColumnSpec[] {
+				FormFactory.DEFAULT_COLSPEC,
+				ColumnSpec.decode("default:grow"),
+				FormFactory.UNRELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+				FormFactory.PREF_COLSPEC,
+				FormFactory.UNRELATED_GAP_COLSPEC,
+				FormFactory.PREF_COLSPEC,
+				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+				FormFactory.PREF_COLSPEC,},
+			new RowSpec[] {
+				RowSpec.decode("26px"),}));
+		
+		JButton btnBorrarTabla = new JButton("Borrar Tabla");
+		pnButtons.add(btnBorrarTabla, "1, 1, fill, fill");
+		
+		JButton btnTotalizar = new JButton("Totalizar");
+		pnButtons.add(btnTotalizar, "2, 1, fill, fill");
+		
+		JLabel lblBase = new JLabel("Productos");
+		pnButtons.add(lblBase, "4, 1, right, fill");
+		
+		txtBases = new JTextField();
+		txtBases.setHorizontalAlignment(SwingConstants.RIGHT);
+		txtBases.setEditable(false);
+		pnButtons.add(txtBases, "6, 1, right, fill");
+		txtBases.setColumns(10);
+		JLabel lblTotal = new JLabel("IVA");
+		pnButtons.add(lblTotal, "8, 1, fill, center");
+		
+		txtIvas = new JTextField();
+		txtIvas.setEditable(false);
+		txtIvas.setHorizontalAlignment(SwingConstants.RIGHT);
+		txtIvas.setAlignmentX(Component.RIGHT_ALIGNMENT);
+		pnButtons.add(txtIvas, "10, 1, right, fill");
+		txtIvas.setColumns(10);
+		
+		/*
+		 * ESCUCHADORES
+		 */
+		
 		prodTabla.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -129,70 +162,109 @@ public class FacturaDetallesPanel extends JPanel {
 				}
 			}
 		});
-		pnTable.setViewportView(prodTabla);
 		
-		JPanel pnButtons = new JPanel();
-		add(pnButtons, BorderLayout.SOUTH);
-		pnButtons.setLayout(new FormLayout(new ColumnSpec[] {
-				FormFactory.DEFAULT_COLSPEC,
-				ColumnSpec.decode("default:grow"),
-				FormFactory.PREF_COLSPEC,
-				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-				FormFactory.PREF_COLSPEC,},
-			new RowSpec[] {
-				RowSpec.decode("26px"),}));
-		
-		JButton btnBorrarTabla = new JButton("Borrar Tabla");
-		btnBorrarTabla.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				vaciar(prodTabla);
+		prodTabla.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent me) {
+				System.out.println(me);
+				if (me.getClickCount()>=2) {
+					int row = prodTabla.getSelectedRow();
+					if (row!=-1) {
+						FacturaDetalle fd = obtenerFacturaDetalleEn(row);
+						System.out.println(fd);
+							FacturaDetalleDialogo dialog = new FacturaDetalleDialogo (fd);
+							FacturaDetalle c = dialog.mostrar();
+							if (c!=null) {
+								ponerFacturaDetalle(row, c);
+								prodTabla.validate();
+								prodTabla.repaint();
+							}
+					}
+				}
 			}
 		});
-		pnButtons.add(btnBorrarTabla, "1, 1");
 		
-		JButton btnTotalizar = new JButton("Totalizar");
-		pnButtons.add(btnTotalizar, "2, 1, left, fill");
+		/*
+		 * BOTONES
+		 */
+		
+		btnEliminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				eliminarFilaSeleccionada(prodTabla);
+			}
+		});
+		
+		btnAgregar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Producto producto = (Producto) cbProducto.getSelectedItem();
+				if (producto!=null) {
+					FacturaDetalle fd = new FacturaDetalle(0, facturaId, producto.getId(), producto.getNombre(), producto.getPrecio(), producto.getIva(), (int) numCantidad.getValue());
+					agregarFacturaDetalle(fd);
+					cbProducto.setSelectedIndex(-1);
+				}				
+
+				//SpinnerNumberModel a = (SpinnerNumberModel) numCantidad.getModel();
+				//numCantidad.setValue(a.getMinimum());
+			}
+		});
+		
 		btnTotalizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				int suma = 0;
 				DefaultTableModel dtm = (DefaultTableModel) prodTabla.getModel();
+				double sumaBases = 0;
+				double sumaIvas = 0;
 				for (int i = 0; i < dtm.getRowCount(); i++) {
-					suma += (int) dtm.getValueAt(i, 1);
+					FacturaDetalle fd = obtenerFacturaDetalleEn(i);
+					sumaIvas += (fd.getCantidad() * fd.getProdIva());
+					sumaBases += (fd.getCantidad() * fd.getProdPrecio());
 				}
-				txtTotal.setText(""+suma);
+				txtIvas.setText(""+sumaIvas);
+				txtBases.setText(""+sumaBases);
 			}
 		});
 		
-		JLabel lblTotal = new JLabel("Total");
-		pnButtons.add(lblTotal, "3, 1, right, center");
+		btnBorrarTabla.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				vaciar();
+			}
+		});
 		
-		txtTotal = new JTextField();
-		txtTotal.setEditable(false);
-		txtTotal.setHorizontalAlignment(SwingConstants.RIGHT);
-		txtTotal.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		pnButtons.add(txtTotal, "5, 1, right, fill");
-		txtTotal.setColumns(10);
-		
-		//ACCIONES A REALIZAR AL INICIAR
-		vaciar(prodTabla);
+		/*
+		 * ACCIONES A REALIZAR AL INICIAR
+		 * */
+		vaciar();
 		cbProducto.recargarCombo();
-	}
-
-	protected void eliminarFilaSeleccionada(JTable t) {
-		int row = t.getSelectedRow();
-		if (row>=0) {
-			System.out.println(row);
-			DefaultTableModel dtm = (DefaultTableModel) t.getModel();
-			dtm.removeRow(row);
-		}
-	}
-
-	private void vaciar(JTable t) {
-		DefaultTableModel datos = (DefaultTableModel) t.getModel();
-		datos.setRowCount(0);
+		
 	}
 	
-	private void insertarFacturaDetalle(FacturaDetalle fd) {
+	/*
+	 * 
+	 * METODOS PRIVADOS
+	 *
+	 *
+	*/
+	
+	protected FacturaDetalle obtenerFacturaDetalleEn(int row) {
+		FacturaDetalle facDet = (FacturaDetalle) prodTabla.getValueAt(row, 0);
+		facDet.setProdPrecio((double) prodTabla.getValueAt(row, 1));
+		facDet.setProdIva((double) prodTabla.getValueAt(row, 2));
+		facDet.setCantidad((int) prodTabla.getValueAt(row, 3));
+		return facDet;
+	}
+	
+	private void ponerFacturaDetalle(int row, FacturaDetalle fd) {
+		//"Detalle", "Precio", "IVA", "Cantidad"
+		Vector<Object> filaData = new Vector<>();
+		filaData.add(fd);
+		filaData.add(fd.getProdPrecio());
+		filaData.add(fd.getProdIva());
+		filaData.add(fd.getCantidad());
+		DefaultTableModel datos = (DefaultTableModel) prodTabla.getModel();
+		datos.removeRow(row);
+		datos.insertRow(row, filaData);
+	}
+	
+	private void agregarFacturaDetalle(FacturaDetalle fd) {
 		//"Detalle", "Precio", "IVA", "Cantidad"
 		Vector<Object> filaData = new Vector<>();
 		filaData.add(fd);
@@ -203,14 +275,14 @@ public class FacturaDetallesPanel extends JPanel {
 		datos.addRow(filaData);
 	}
 	
-	public void putListaDetalles(ArrayList<FacturaDetalle> listaDetalles) {
-		vaciar(prodTabla);
+	public void ponerListaDetalles(ArrayList<FacturaDetalle> listaDetalles) {
+		vaciar();
 		for (FacturaDetalle fd : listaDetalles) {
-			insertarFacturaDetalle(fd);
+			agregarFacturaDetalle(fd);
 		}
 	}
 	
-	public ArrayList<FacturaDetalle> getListaDetalles() {
+	public ArrayList<FacturaDetalle> recuperarListaDetalles() {
 		DefaultTableModel datos = (DefaultTableModel) prodTabla.getModel();
 		ArrayList<FacturaDetalle> listaDetalles = new ArrayList<>();
 		for (int i = 0; i < datos.getRowCount(); i++) {
@@ -218,6 +290,20 @@ public class FacturaDetallesPanel extends JPanel {
 			listaDetalles.add(fd);
 		}
 		return listaDetalles;
+	}
+	
+	protected void eliminarFilaSeleccionada(JTable t) {
+		int row = t.getSelectedRow();
+		if (row>=0) {
+			System.out.println(row);
+			DefaultTableModel dtm = (DefaultTableModel) t.getModel();
+			dtm.removeRow(row);
+		}
+	}
+
+	private void vaciar() {
+		DefaultTableModel datos = (DefaultTableModel) prodTabla.getModel();
+		datos.setRowCount(0);
 	}
 
 }

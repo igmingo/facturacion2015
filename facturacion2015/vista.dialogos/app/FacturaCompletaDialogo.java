@@ -62,27 +62,30 @@ public class FacturaCompletaDialogo extends JDialog {
 	private JTextField txtId;
 	private JTextField txtNumero;
 	private JDateChooser dateFecha;
+	
 	private ClientesCombo cbCliente;
+	private JTextField txtNombreCliente;
 	private JSpinner numPorcDescuento;
 	private JSpinner numPorcRecargoequivalencia;
-	private JSpinner numImptotal;
+	
+	private FacturaDetallesPanel pnProductos;
+	
+	private JSpinner numImpBase;
 	private JSpinner numImprecargo;
 	private JSpinner numImpiva;
+	private JSpinner numImporteTotal;
+	
 	private JTextField txtDirCorreo;
 	private JTextField txtDirFactura;
 	private JTextField txtDirEnvio;
+	
 	private JCheckBox chkbxCobrada;
-	//private FacturasDetalleTabla tbFacturaDetalles;
-	private FacturaDetallesPanel pnProductos;
-	private JTextField txtNombreCliente;
 
 	public FacturaCompletaDialogo(Factura fac) {
 		//De la factura que paso, solo necesito el ID (en principio)
 		
 		this.factura = fac;
-		
-		setResizable(false);
-		setBounds(new Rectangle(0, 0, 700, 600));
+		setBounds(new Rectangle(0, 0, 710, 600));
 		setTitle("Factura");
 		setModal(true);
 		getContentPane().setLayout(null);
@@ -125,29 +128,42 @@ public class FacturaCompletaDialogo extends JDialog {
 		
 		JPanel pnNumFactura = new JPanel();
 		panel.add(pnNumFactura, "4, 2, fill, fill");
-		pnNumFactura.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		pnNumFactura.setLayout(new FormLayout(new ColumnSpec[] {
+				FormFactory.PREF_COLSPEC,
+				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+				ColumnSpec.decode("86px:grow(2)"),
+				FormFactory.UNRELATED_GAP_COLSPEC,
+				FormFactory.PREF_COLSPEC,
+				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+				ColumnSpec.decode("95px:grow"),
+				FormFactory.UNRELATED_GAP_COLSPEC,
+				FormFactory.PREF_COLSPEC,
+				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,},
+			new RowSpec[] {
+				RowSpec.decode("20px"),}));
 		
-		JLabel lblNfactura = new JLabel("N\u00BA");
-		pnNumFactura.add(lblNfactura);
+		JLabel lblNfactura = new JLabel("N\u00FAmero");
+		pnNumFactura.add(lblNfactura, "1, 1, left, center");
 		
 		txtNumero = new JTextField();
-		pnNumFactura.add(txtNumero);
+		pnNumFactura.add(txtNumero, "3, 1, fill, fill");
 		txtNumero.setText("numFactura");
 		txtNumero.setColumns(10);
 		
 		JLabel lblFechaDeFactura = new JLabel("Fecha de Factura");
-		pnNumFactura.add(lblFechaDeFactura);
+		pnNumFactura.add(lblFechaDeFactura, "5, 1, left, center");
 		
 		dateFecha = new JDateChooser();
-		pnNumFactura.add(dateFecha);
+		pnNumFactura.add(dateFecha, "7, 1, fill, fill");
 		
 		JLabel lblId = new JLabel("ID");
-		pnNumFactura.add(lblId);
+		pnNumFactura.add(lblId, "9, 1, left, center");
 		
 		txtId = new JTextField();
 		txtId.setColumns(10);
 		txtId.setHorizontalAlignment(SwingConstants.RIGHT);
-		pnNumFactura.add(txtId);
+		pnNumFactura.add(txtId, "11, 1, right, fill");
 		txtId.setEditable(false);
 		txtId.setText("id");
 		
@@ -156,14 +172,63 @@ public class FacturaCompletaDialogo extends JDialog {
 		
 		JPanel pnCliente = new JPanel();
 		panel.add(pnCliente, "4, 4, fill, fill");
-		pnCliente.setLayout(new GridLayout(0, 2, 0, 0));
+		pnCliente.setLayout(new GridLayout(0, 1, 0, 0));
+		
+		JPanel pnEditorCliente = new JPanel();
+		pnCliente.add(pnEditorCliente);
+		pnEditorCliente.setLayout(new FormLayout(new ColumnSpec[] {
+				ColumnSpec.decode("406px:grow"),},
+			new RowSpec[] {
+				RowSpec.decode("20px"),}));
 		
 		txtNombreCliente = new JTextField();
-		pnCliente.add(txtNombreCliente);
-		txtNombreCliente.setColumns(10);
+		txtNombreCliente.setColumns(5);
+		pnEditorCliente.add(txtNombreCliente, "1, 1, fill, fill");
+		
+		JPanel pnDatosCliente = new JPanel();
+		pnCliente.add(pnDatosCliente);
+		pnDatosCliente.setLayout(new FormLayout(new ColumnSpec[] {
+				ColumnSpec.decode("123px:grow(3)"),
+				FormFactory.UNRELATED_GAP_COLSPEC,
+				FormFactory.PREF_COLSPEC,
+				FormFactory.RELATED_GAP_COLSPEC,
+				ColumnSpec.decode("29px:grow"),
+				FormFactory.UNRELATED_GAP_COLSPEC,
+				FormFactory.PREF_COLSPEC,
+				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
+				ColumnSpec.decode("29px:grow"),},
+			new RowSpec[] {
+				RowSpec.decode("20px"),}));
 		
 		cbCliente = new ClientesCombo();
-		pnCliente.add(cbCliente);
+		pnDatosCliente.add(cbCliente, "1, 1, fill, fill");
+		
+		JLabel lblDescuento = new JLabel("% Descuento");
+		pnDatosCliente.add(lblDescuento, "3, 1, left, center");
+		lblDescuento.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		numPorcDescuento = new JSpinner();
+		pnDatosCliente.add(numPorcDescuento, "5, 1, fill, fill");
+		numPorcDescuento.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
+		
+		JLabel lblRecargoEquivalencia = new JLabel("% Recargo Equiv.");
+		pnDatosCliente.add(lblRecargoEquivalencia, "7, 1, left, center");
+		lblRecargoEquivalencia.setHorizontalAlignment(SwingConstants.RIGHT);
+		
+		numPorcRecargoequivalencia = new JSpinner();
+		pnDatosCliente.add(numPorcRecargoequivalencia, "9, 1, fill, fill");
+		numPorcRecargoequivalencia.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
+		
+		cbCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Cliente cli = cbCliente.getSelectedCliente();
+				numPorcDescuento.setValue(cli.getPorcDescuento());
+				numPorcRecargoequivalencia.setValue(cli.getPorcRecargoEquivalencia());
+				if (txtNombreCliente.getText().length()==0) {
+					txtNombreCliente.setText(cli.getApellidos() + ", " + cli.getNombre());					
+				}
+			}
+		});
 		
 		JLabel lblProductos = new JLabel("Productos");
 		panel.add(lblProductos, "2, 6, right, default");
@@ -189,7 +254,15 @@ public class FacturaCompletaDialogo extends JDialog {
 		panel.add(pnDescuentos, "4, 8, fill, fill");
 		pnDescuentos.setLayout(new GridLayout(0, 2, 0, 0));
 		
-		JLabel lblImporteRecago = new JLabel("Recargo");
+		JLabel lblImporteTotal = new JLabel("Importe Base");
+		lblImporteTotal.setHorizontalAlignment(SwingConstants.RIGHT);
+		pnDescuentos.add(lblImporteTotal);
+		
+		numImpBase = new JSpinner();
+		numImpBase.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
+		pnDescuentos.add(numImpBase);
+		
+		JLabel lblImporteRecago = new JLabel("Importe Recargo Equivalencia");
 		lblImporteRecago.setHorizontalAlignment(SwingConstants.RIGHT);
 		pnDescuentos.add(lblImporteRecago);
 		
@@ -198,23 +271,7 @@ public class FacturaCompletaDialogo extends JDialog {
 		numImprecargo.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
 		pnDescuentos.add(numImprecargo);
 		
-		JLabel lblDescuento = new JLabel("% Descuento");
-		lblDescuento.setHorizontalAlignment(SwingConstants.RIGHT);
-		pnDescuentos.add(lblDescuento);
-		
-		numPorcDescuento = new JSpinner();
-		numPorcDescuento.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
-		pnDescuentos.add(numPorcDescuento);
-		
-		JLabel lblRecargoEquivalencia = new JLabel("% Recargo Equivalencia");
-		lblRecargoEquivalencia.setHorizontalAlignment(SwingConstants.RIGHT);
-		pnDescuentos.add(lblRecargoEquivalencia);
-		
-		numPorcRecargoequivalencia = new JSpinner();
-		numPorcRecargoequivalencia.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
-		pnDescuentos.add(numPorcRecargoequivalencia);
-		
-		JLabel lblImporteIva = new JLabel("IVA");
+		JLabel lblImporteIva = new JLabel("Importe IVA");
 		lblImporteIva.setHorizontalAlignment(SwingConstants.RIGHT);
 		pnDescuentos.add(lblImporteIva);
 		
@@ -222,13 +279,13 @@ public class FacturaCompletaDialogo extends JDialog {
 		numImpiva.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
 		pnDescuentos.add(numImpiva);
 		
-		JLabel lblImporteTotal = new JLabel("TOTAL");
-		lblImporteTotal.setHorizontalAlignment(SwingConstants.RIGHT);
-		pnDescuentos.add(lblImporteTotal);
+		JLabel lblImporteTotal_1 = new JLabel("IMPORTE TOTAL");
+		lblImporteTotal_1.setHorizontalAlignment(SwingConstants.RIGHT);
+		pnDescuentos.add(lblImporteTotal_1);
 		
-		numImptotal = new JSpinner();
-		numImptotal.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
-		pnDescuentos.add(numImptotal);
+		numImporteTotal = new JSpinner();
+		numImporteTotal.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
+		pnDescuentos.add(numImporteTotal);
 		
 		JLabel lblDireccin = new JLabel("Direcci\u00F3n");
 		panel.add(lblDireccin, "2, 10, right, default");
@@ -356,10 +413,11 @@ public class FacturaCompletaDialogo extends JDialog {
 			dateFecha.setDate(factura.getFecha());
 			txtNombreCliente.setText(factura.getNombreCliente());
 			cbCliente.setSelectedId(factura.getClienteId());
+			pnProductos.ponerListaDetalles(factura.getDetalles());
 			//tbFacturaDetalles.putDetalles(factura.getDetalles());
 			numPorcDescuento.setValue(factura.getPorcDescuento());
 			numPorcRecargoequivalencia.setValue(factura.getPorcRecargoEquivalencia());
-			numImptotal.setValue(factura.getImpTotal());
+			numImpBase.setValue(factura.getImpTotal());
 			numImprecargo.setValue(factura.getImpRecargo());
 			numImpiva.setValue(factura.getImpIva());
 			txtDirCorreo.setText(factura.getDirCorreo());
@@ -372,10 +430,11 @@ public class FacturaCompletaDialogo extends JDialog {
 			dateFecha.setDate(new Date());
 			txtNombreCliente.setText("");
 			cbCliente.setSelectedId(null);
+			pnProductos.ponerListaDetalles(null);
 			//tbFacturaDetalles.putDetalles(null);
 			numPorcDescuento.setValue(0);
 			numPorcRecargoequivalencia.setValue(0);
-			numImptotal.setValue(0);
+			numImpBase.setValue(0);
 			numImprecargo.setValue(0);
 			numImpiva.setValue(0);
 			txtDirCorreo.setText("");
@@ -398,14 +457,14 @@ public class FacturaCompletaDialogo extends JDialog {
 		Date fecha = dateFecha.getDate();
 		Double porcDescuento = Utilidades.validarDouble("" + numPorcDescuento.getValue());
 		Double porcRecargoEquivalencia = Utilidades.validarDouble("" + numPorcRecargoequivalencia.getValue());
-		Double impTotal = Utilidades.validarDouble("" + numImptotal.getValue());
-		Double impRecargo = Utilidades.validarDouble(""	+ numImptotal.getValue());
-		Double impIva = Utilidades.validarDouble("" + numImptotal.getValue());
+		Double impTotal = Utilidades.validarDouble("" + numImpBase.getValue());
+		Double impRecargo = Utilidades.validarDouble(""	+ numImpBase.getValue());
+		Double impIva = Utilidades.validarDouble("" + numImpBase.getValue());
 		String dirCorreo = txtDirCorreo.getText().trim();
 		String dirFactura = txtDirFactura.getText().trim();
 		String dirEnvio = txtDirEnvio.getText().trim();
 		Boolean cobrada = chkbxCobrada.isSelected();
-		ArrayList<FacturaDetalle> detalles = pnProductos.getListaDetalles();
+		ArrayList<FacturaDetalle> detalles = pnProductos.recuperarListaDetalles();
 		//ArrayList<FacturaDetalle> detalles = tbFacturaDetalles.getListaDetalles();
 		try {
 			fac = new Factura(id, clienteId, nombreCliente, numero, fecha, porcDescuento, porcRecargoEquivalencia, impTotal, impRecargo, impIva, dirCorreo, dirFactura, dirEnvio, cobrada, detalles);

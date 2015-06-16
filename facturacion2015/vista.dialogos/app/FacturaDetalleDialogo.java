@@ -15,18 +15,10 @@ import javax.swing.JButton;
 
 import java.awt.Rectangle;
 
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JCheckBox;
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.util.Date;
-
-import com.toedter.calendar.JDateChooser;
 
 import javax.swing.JSpinner;
-import javax.swing.JComboBox;
 
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
@@ -147,19 +139,22 @@ public class FacturaDetalleDialogo extends JDialog {
 		cbProd.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent arg0) {
 				Producto prod = (Producto) cbProd.getSelectedItem();
-				txtProdNombre.setText(prod.getNombre());
-				numProdPrecio.setValue(prod.getPrecio());
-				numProdIva.setValue(prod.getIva());
+				if (prod!=null) {
+					txtProdNombre.setText(prod.getNombre());
+					numProdPrecio.setValue(prod.getPrecio());
+					numProdIva.setValue(prod.getIva());
+				}
 			}
 		});
 		
 		JPanel pnButtons = new JPanel();
 		getContentPane().add(pnButtons, BorderLayout.SOUTH);
 		
-		JButton btnGrabar = new JButton("Guardar");
+		JButton btnGrabar = new JButton("Aceptar");
 		pnButtons.add(btnGrabar);
-		JButton btnEliminar = new JButton("Eliminar");
-		pnButtons.add(btnEliminar);
+//		JButton btnEliminar = new JButton("Eliminar");
+//		pnButtons.add(btnEliminar);
+		
 		JButton btnCancelar = new JButton("Cancelar");
 		pnButtons.add(btnCancelar);
 		btnCancelar.addActionListener(new ActionListener() {
@@ -168,12 +163,12 @@ public class FacturaDetalleDialogo extends JDialog {
 				setVisible(false);
 			}
 		});
-		btnEliminar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				eliminar();
-				setVisible(false);
-			}
-		});
+//		btnEliminar.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				eliminar();
+//				setVisible(false);
+//			}
+//		});
 		
 		btnGrabar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -183,40 +178,33 @@ public class FacturaDetalleDialogo extends JDialog {
 		});
 		
 		
-		if (fd!=null && fd.getId()>0) {
-			fd = new FacturasDetallesBDD().recuperaPorId(fd.getId());
-		}
+//		if (fd!=null && fd.getId()>0) {
+//			fd = new FacturasDetallesBDD().recuperaPorId(fd.getId());
+//		}
 		setForm();
 		
 	}
 	
-	private void eliminar() {
-		Integer id = Utilidades.validarEntero(txtId.getText());
-		if (id!=null) {
-			int pregunta = JOptionPane.showConfirmDialog(null, "¿Desea eliminar el Detalle de Producto?\n", "Eliminar Detalle de Producto", JOptionPane.OK_CANCEL_OPTION);
-			if (pregunta==JOptionPane.OK_OPTION) {
-				boolean eliminado = new FacturasDetallesBDD().eliminar(id);
-				if (eliminado) {
-					fd = null;
-					mostrarMensaje("Detalle de Factura Eliminado.");
-				} else {
-					mostrarMensaje("No se ha podido eliminar.");
-				}
-			}
-		}
-	}
+//	private void eliminar() {
+//		Integer id = Utilidades.validarEntero(txtId.getText());
+//		if (id!=null) {
+//			int pregunta = JOptionPane.showConfirmDialog(null, "¿Desea eliminar el Detalle de Producto?\n", "Eliminar Detalle de Producto", JOptionPane.OK_CANCEL_OPTION);
+//			if (pregunta==JOptionPane.OK_OPTION) {
+//				boolean eliminado = new FacturasDetallesBDD().eliminar(id);
+//				if (eliminado) {
+//					fd = null;
+//					mostrarMensaje("Detalle de Factura Eliminado.");
+//				} else {
+//					mostrarMensaje("No se ha podido eliminar.");
+//				}
+//			}
+//		}
+//	}
 	
 	private void guardar() {
 		fd = getForm();
 		if (fd!=null) {
-			int newId = new FacturasDetallesBDD().grabar(fd);
-			if (newId>=0) {
-				fd.setId(newId);
-				setForm();
-				mostrarMensaje("Detalle de Factura guardada correctamente.");
-			} else {
-				mostrarMensaje("Error al guardar.");
-			}
+			mostrarMensaje("Detalle de Factura modificado correctamente.");
 		} else {
 			mostrarMensaje("El formulario no es correcto.");
 		}
@@ -227,7 +215,7 @@ public class FacturaDetalleDialogo extends JDialog {
 	 * @param fd es la instancia del Detalle de Producto con el que vamos a rellenar el forumulario. Si es null, se rellena un formulario con id = 0;
 	 */
 	private void setForm() {
-		if (fd!=null && fd.getId()>0) {
+		if (fd!=null) {
 			txtId.setText("" + fd.getId());
 			txtFacturaId.setText("" + fd.getFacturaId());
 			cbProd.setSelectedProductoId(fd.getProdId());

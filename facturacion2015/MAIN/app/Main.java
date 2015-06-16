@@ -1,13 +1,20 @@
 package app;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JPanel;
 import javax.swing.JLabel;
@@ -31,9 +38,9 @@ public class Main extends JFrame {
 		getContentPane().setLayout(null);
 		ImageIcon fondo = new ImageIcon("./images/fondo.jpg");
 		
-		/* PANEL DE LOGIN
-		 *
-		 **/
+		/* 
+		 * PANEL DE LOGIN
+		 */
 		pnLogin = new LoginPanel();
 		pnLogin.setVisible(true);
 		pnLogin.setBounds(0, 0, getWidth(), getHeight());
@@ -134,6 +141,33 @@ public class Main extends JFrame {
 	}
 
 	public static void main(String[] args) {
+		
+		//Toolkit.getDefaultToolkit().beep();
+		
+//		Clip sonido;
+//		try {
+//			sonido = AudioSystem.getClip();
+//			File file = new File("C:/Windows/Media/tada.wav");
+//			try {
+//				sonido.open(AudioSystem.getAudioInputStream(file));
+//			} catch (IOException e) {
+//				// TODO Bloque catch generado automáticamente
+//				e.printStackTrace();
+//			} catch (UnsupportedAudioFileException e) {
+//				// TODO Bloque catch generado automáticamente
+//				e.printStackTrace();
+//			}
+//			sonido.loop(20);
+//			sonido.start();
+//			sonido.stop();
+//		} catch (LineUnavailableException e) {
+//			// TODO Bloque catch generado automáticamente
+//			e.printStackTrace();
+//		}
+		
+
+		
+		
 		Main main = new Main();
 		main.mostrar();
 	}

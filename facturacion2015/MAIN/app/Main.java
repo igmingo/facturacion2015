@@ -9,7 +9,10 @@ import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
+import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -18,6 +21,11 @@ import java.io.IOException;
 
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+
+import java.awt.event.HierarchyBoundsAdapter;
+import java.awt.event.HierarchyEvent;
+import javax.swing.JDesktopPane;
+import java.awt.Color;
 
 public class Main extends JFrame {
 	/**
@@ -31,12 +39,14 @@ public class Main extends JFrame {
 	private Usuario userPpal = null;
 	
 	public Main() {
-		
-		setResizable(false);
-		setBounds(0, 0, 800, 600);
+		setBounds(0, 0, 811, 611);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(null);
-		ImageIcon fondo = new ImageIcon("./images/fondo.jpg");
+		//ImageIcon fondo = new ImageIcon("./images/fondo.jpg");
+		ImageIcon fondo = null;
+		fondo = new ImageIcon(new ImageIcon("./images/fondo.jpg").getImage().getScaledInstance(811,611, Image.SCALE_SMOOTH));
+		
+		//setIcon(new ImageIcon (new ImageIcon("./images/fondo.jpg").getImage().getScaledInstance(811,611, Image.SCALE_SMOOTH)));
 		
 		/* 
 		 * PANEL DE LOGIN
@@ -53,7 +63,12 @@ public class Main extends JFrame {
 		getContentPane().add(pnPrincipal);
 		pnPrincipal.setLayout(null);
 		
-		JLabel lblFondo = new JLabel("");
+		JDesktopPane desktopPane = new JDesktopPane();
+		desktopPane.setBackground(Color.ORANGE);
+		desktopPane.setBounds(0, 0, 1, 1);
+		getContentPane().add(desktopPane);
+		
+		JLabel lblFondo = new JLabel();
 		lblFondo.setBounds(0, 0, 800, 600);
 		lblFondo.setIcon(fondo);
 		getContentPane().add(lblFondo);
@@ -64,79 +79,101 @@ public class Main extends JFrame {
 		JMenu mnProductos = new JMenu("Productos");
 		menuBar.add(mnProductos);
 		JMenuItem mntmNuevoProducto = new JMenuItem("Nuevo Producto");
-		mntmNuevoProducto.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				ProductoDialogo dialogo = new ProductoDialogo(null);
-				dialogo.mostrar();
-			}
-		});
 		mnProductos.add(mntmNuevoProducto);
 		JMenuItem mntmListadoDeProductos = new JMenuItem("Listado de productos");
-		mntmListadoDeProductos.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				mostrarPanel("Productos");
-			}
-		});
 		mnProductos.add(mntmListadoDeProductos);
 		
 		JMenu mnNewMenu = new JMenu("Clientes");
 		menuBar.add(mnNewMenu);
 		JMenuItem mntmNuevoCliente = new JMenuItem("Nuevo Cliente");
-		mntmNuevoCliente.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				ClienteDialogo dialogo = new ClienteDialogo(null);
-				dialogo.mostrar();
-			}
-		});
 		mnNewMenu.add(mntmNuevoCliente);
 		JMenuItem mntmListadoDeClientes = new JMenuItem("Listado de Clientes");
-		mntmListadoDeClientes.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				mostrarPanel("Clientes");
-			}
-		});
 		mnNewMenu.add(mntmListadoDeClientes);
 		
 		JMenu mnFacturas = new JMenu("Facturas");
 		menuBar.add(mnFacturas);
 		JMenuItem mntmNuevaFactura = new JMenuItem("Nueva Factura");
-		mntmNuevaFactura.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				FacturaCompletaDialogo dialogo = new FacturaCompletaDialogo(null);
-				Factura fac = dialogo.mostrar();
-			}
-		});
 		mnFacturas.add(mntmNuevaFactura);
 		JMenuItem mntmListadoDeFacturas = new JMenuItem("Listado de Facturas");
 		mnFacturas.add(mntmListadoDeFacturas);
 		
 		JMenu mnConsultas = new JMenu("Consultas");
 		menuBar.add(mnConsultas);
-		
 		JMenuItem mntmPruebas = new JMenuItem("Pruebas");
-		mntmPruebas.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				Prueba p = new Prueba ();
-				p.setVisible(true);
-			}
-		});
 		mnConsultas.add(mntmPruebas);
 		
 		JMenu mnUsuarios = new JMenu("Usuarios");
 		menuBar.add(mnUsuarios);
-		
 		JMenuItem mntmAadirUsuario = new JMenuItem("A\u00F1adir Usuario");
 		mnUsuarios.add(mntmAadirUsuario);
-		
 		JMenuItem mntmAdminstracinDeUsuarios = new JMenuItem("Administraci\u00F3n de Usuarios");
 		mnUsuarios.add(mntmAdminstracinDeUsuarios);
+		menuBar.setVisible(false);
+		
+		// LISTENERS
+		
+		mntmListadoDeProductos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mostrarPanel("Productos");
+			}
+		});
+		
+		mntmNuevoProducto.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ProductoDialogo dialogo = new ProductoDialogo(null);
+				dialogo.mostrar();
+			}
+		});
+		
+		mntmNuevoCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ClienteDialogo dialogo = new ClienteDialogo(null);
+				dialogo.mostrar();
+			}
+		});
+		
+		mntmListadoDeClientes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				mostrarPanel("Clientes");
+			}
+		});
+		
+		mntmNuevaFactura.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				FacturaCompletaDialogo dialogo = new FacturaCompletaDialogo(null);
+				Factura fac = dialogo.mostrar();
+			}
+		});
+		
 		mntmListadoDeFacturas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				mostrarPanel("Facturas");
 			}
 		});
 		
-		menuBar.setVisible(false);
+		mntmPruebas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Prueba p = new Prueba ();
+				p.setVisible(true);
+			}
+		});
+		getContentPane().addHierarchyBoundsListener(new HierarchyBoundsAdapter() {
+			@Override
+			public void ancestorResized(HierarchyEvent e) {
+				Dimension dim = getContentPane().getSize();
+				pnLogin.setSize(dim);
+//				if (dim.getWidth()>100 && dim.getWidth()>100) {
+//					lblFondo.setIcon(new ImageIcon(new ImageIcon(
+//							"./images/fondo.jpg").getImage()
+//							.getScaledInstance(
+//									(int) dim.getWidth(),
+//									(int) dim.getHeight(),
+//									Image.SCALE_SMOOTH)));
+//				}
+				pnLogin.repaint();
+				//System.out.println(getContentPane().getSize());
+			}
+		});
 		
 		pnLogin.btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -186,9 +223,6 @@ public class Main extends JFrame {
 //			// TODO Bloque catch generado automáticamente
 //			e.printStackTrace();
 //		}
-		
-
-		
 		
 		Main main = new Main();
 		main.mostrar();

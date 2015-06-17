@@ -26,7 +26,7 @@ public class FacturasBDD {
 	
 	//METODO PUBLICO
 	
-	public ArrayList<Factura> recuperaFacturaCompletaPorFiltro(String filtro) {
+	public ArrayList<Factura> recuperaFacturaPorFiltro(String filtro) {
 		String sql = "SELECT * FROM facturas WHERE ";
 		sql += filtro==null || filtro.length()==0?"1":filtro;
 		sql += " ORDER BY facturas.numero";
@@ -54,8 +54,7 @@ public class FacturasBDD {
 					String dirFactura = rs.getString("dirFactura");
 					String dirEnvio = rs.getString("dirEnvio");
 					boolean cobrada = rs.getBoolean("cobrada");
-					ArrayList<FacturaDetalle> detalles = new FacturasDetallesBDD().recuperaPorFacturaId(id);
-					lista.add(new Factura(id, clienteId, nombreCliente, numero, fecha, porcDescuento, porcRecargoEquivalencia, impTotal, impRecargo, impIva, dirCorreo, dirFactura, dirEnvio, cobrada, detalles));		
+					lista.add(new Factura(id, clienteId, nombreCliente, numero, fecha, porcDescuento, porcRecargoEquivalencia, impTotal, impRecargo, impIva, dirCorreo, dirFactura, dirEnvio, cobrada));		
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -69,62 +68,65 @@ public class FacturasBDD {
 		return lista;
 	}
 	
-	public ArrayList<Factura> recuperaFacturaSimplePorFiltro(String filtro) {
-		String sql = "SELECT * FROM facturas WHERE ";
-		sql += filtro==null || filtro.length()==0?"1":filtro;
-		sql += " ORDER BY facturas.numero";
-		System.out.println(sql);
-		ArrayList<Factura> lista = null;
-		Connection c = new Conexion().getConection();
-		if (c != null) {
-			lista = new ArrayList<>();
-			try {
-				// Crea un ESTAMENTO (comando de ejecucion de un sql)
-				Statement comando = c.createStatement();
-				ResultSet rs = comando.executeQuery(sql);
-				while (rs.next() == true) {
-					int id = rs.getInt("id");
-					int clienteId = rs.getInt("clienteId");
-					String nombreCliente = rs.getString("nombreCliente");
-					int numero = rs.getInt("numero");
-					Date fecha = rs.getDate("fecha");
-					double porcDescuento = rs.getDouble("porcDescuento");
-					double porcRecargoEquivalencia = rs.getDouble("porcRecargoEquivalencia");
-					double impTotal = rs.getDouble("impTotal");
-					double impRecargo = rs.getDouble("impRecargo");
-					double impIva = rs.getDouble("impIva");
-					String dirCorreo = rs.getString("dirCorreo");
-					String dirFactura = rs.getString("dirFactura");
-					String dirEnvio = rs.getString("dirEnvio");
-					boolean cobrada = rs.getBoolean("cobrada");
-					ArrayList<FacturaDetalle> detalles = null;
-					lista.add(new Factura(id, clienteId, nombreCliente, numero, fecha, porcDescuento, porcRecargoEquivalencia, impTotal, impRecargo, impIva, dirCorreo, dirFactura, dirEnvio, cobrada, detalles));		
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			try {
-				c.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		return lista;
-	}
+//	public ArrayList<Factura> recuperaFacturaSimplePorFiltro(String filtro) {
+//		String sql = "SELECT * FROM facturas WHERE ";
+//		sql += filtro==null || filtro.length()==0?"1":filtro;
+//		sql += " ORDER BY facturas.numero";
+//		System.out.println(sql);
+//		ArrayList<Factura> lista = null;
+//		Connection c = new Conexion().getConection();
+//		if (c != null) {
+//			lista = new ArrayList<>();
+//			try {
+//				// Crea un ESTAMENTO (comando de ejecucion de un sql)
+//				Statement comando = c.createStatement();
+//				ResultSet rs = comando.executeQuery(sql);
+//				while (rs.next() == true) {
+//					int id = rs.getInt("id");
+//					int clienteId = rs.getInt("clienteId");
+//					String nombreCliente = rs.getString("nombreCliente");
+//					int numero = rs.getInt("numero");
+//					Date fecha = rs.getDate("fecha");
+//					double porcDescuento = rs.getDouble("porcDescuento");
+//					double porcRecargoEquivalencia = rs.getDouble("porcRecargoEquivalencia");
+//					double impTotal = rs.getDouble("impTotal");
+//					double impRecargo = rs.getDouble("impRecargo");
+//					double impIva = rs.getDouble("impIva");
+//					String dirCorreo = rs.getString("dirCorreo");
+//					String dirFactura = rs.getString("dirFactura");
+//					String dirEnvio = rs.getString("dirEnvio");
+//					boolean cobrada = rs.getBoolean("cobrada");
+//					lista.add(new Factura(id, clienteId, nombreCliente, numero, fecha, porcDescuento, porcRecargoEquivalencia, impTotal, impRecargo, impIva, dirCorreo, dirFactura, dirEnvio, cobrada));		
+//				}
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			}
+//			try {
+//				c.close();
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return lista;
+//	}
 	
 	public ArrayList<Factura> recuperaPorNumeroFactura(int numeroFactura) {
 		String filtro = "facturas.numero = " + numeroFactura;
-		return recuperaFacturaSimplePorFiltro(filtro);
+		return recuperaFacturaPorFiltro(filtro);
 	}
 	
 	public ArrayList<Factura> recuperaTodas(){
-		return recuperaFacturaSimplePorFiltro("WHERE 1");
+		return recuperaFacturaPorFiltro("WHERE 1");
 	}
 	
 	public Factura recuperaFacturaCompletaPorId(int id){
 		if (id != 0) {
 			String filtro = "facturas.id = " + id;
-			ArrayList<Factura> lista = recuperaFacturaCompletaPorFiltro(filtro);
+			ArrayList<Factura> lista = recuperaFacturaPorFiltro(filtro);
+			Factura fd = lista.get(0);
+			//RECUPERAMOS EL CLIENTE Y LOS DETALLES
+			fd.setDetalles(new FacturasDetallesBDD().recuperaPorFacturaId(fd.getId()));
+			fd.setCliente(new ClientesBDD().recuperaPorId(fd.getClienteId()));
 			return lista.get(0);
 		} else {
 			Factura p = new Factura();
@@ -136,7 +138,7 @@ public class FacturasBDD {
 	public Factura recuperaPorId(int id){
 		if (id != 0) {
 			String filtro = "facturas.id = " + id;
-			ArrayList<Factura> lista = recuperaFacturaSimplePorFiltro(filtro);
+			ArrayList<Factura> lista = recuperaFacturaPorFiltro(filtro);
 			return lista.get(0);
 		} else {
 			Factura p = new Factura();
@@ -466,7 +468,7 @@ public class FacturasBDD {
 		filtros.add("facturas.numero LIKE '%" + txtFiltro + "%'");
 		filtros.add("facturas.nombreCliente LIKE '%" + txtFiltro + "%'");
 		String filtro = Utilidades.creaFiltro(filtros);
-		ArrayList<Factura> lista = recuperaFacturaSimplePorFiltro(filtro);		
+		ArrayList<Factura> lista = recuperaFacturaPorFiltro(filtro);		
 		ArrayList<Vector<Object>> tableData = null;
 		if (lista!=null && lista.size()>0) {
 			tableData = new ArrayList<>();

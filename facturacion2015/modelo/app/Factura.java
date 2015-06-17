@@ -72,9 +72,10 @@ public class Factura {
 			Date fecha, double porcDescuento, double porcRecargoEquivalencia,
 			double impTotal, double impRecargo, double impIva,
 			String dirCorreo, String dirFactura, String dirEnvio,
-			boolean cobrada, ArrayList<FacturaDetalle> detalles) {
+			boolean cobrada) {
 		this.id = id;
 		this.clienteId = clienteId;
+		this.cliente = null;
 		this.nombreCliente = nombreCliente;
 		this.numero = numero;
 		this.fecha = fecha;
@@ -87,7 +88,7 @@ public class Factura {
 		this.dirFactura = dirFactura;
 		this.dirEnvio = dirEnvio;
 		this.cobrada = cobrada;
-		this.detalles = detalles;
+		this.detalles = null;
 	}
 
 //	public Factura(int id, int clienteId, int numero, Date fecha, double porcDescuento, double porcRecargoEquivalencia, double impTotal, double impRecargo, double impIva, String dirCorreo, String dirFactura, String dirEnvio, boolean cobrada) {

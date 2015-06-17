@@ -77,11 +77,10 @@ public class FacturaCompletaDialogo extends JDialog {
 
 	public FacturaCompletaDialogo(Factura fac) {
 		//De la factura que paso, solo necesito el ID (en principio)
-		
+		//Para crear una factura se fac = null;
 		this.factura = fac;
 		
 		setBounds(new Rectangle(0, 0, 710, 600));
-		setTitle("Factura");
 		setModal(true);
 		getContentPane().setLayout(null);
 		
@@ -363,17 +362,26 @@ public class FacturaCompletaDialogo extends JDialog {
 //			}
 //		});
 		
-		if (factura!=null && factura.getId()>0) {
+		//factura vale null o una Factura
+		
+		if (this.factura!=null) {
+			//MODIFICAR FACTURA
+			setTitle("Modificar Factura");
+			//RECUPERAMOS LA FACTURA
+			this.factura = new FacturasBDD().recuperaFacturaCompletaPorId(factura.getId());
+			//RECUPERA UN CLIENTE
 			if (this.factura.getCliente()==null) {
 				try {
 					this.factura.setCliente(new ClientesBDD().recuperaPorId(this.factura.getClienteId()));
 				} catch (Exception e1) {
 				}
 			}
-			factura = new FacturasBDD().recuperaFacturaCompletaPorId(factura.getId());
+			
 			pnProductos = new FacturaDetallesPanel(factura.getId());
 			panel.add(pnProductos, "4, 5, fill, fill");
 		} else {
+			//NUEVA FACTURA
+			setTitle("Nueva Factura");
 			factura = null;
 			pnProductos = new FacturaDetallesPanel(0);
 			panel.add(pnProductos, "4, 5, fill, fill");
@@ -475,7 +483,7 @@ public class FacturaCompletaDialogo extends JDialog {
 		
 		Integer id = Utilidades.validarEntero(txtId.getText().trim());
 		String nombreCliente = cbCliente.obtenerNombreCliente();
-		Integer clienteId = cbCliente.obtenerClienteIdSeleccionado();
+		Cliente cliente = cbCliente.obtenerClienteSeleccionado();
 		Integer numero = Utilidades.validarEntero(txtNumero.getText().trim());
 		Date fecha = dateFecha.getDate();
 		Double porcDescuento = Utilidades.validarDouble("" + numPorcDescuento.getValue());
@@ -490,7 +498,7 @@ public class FacturaCompletaDialogo extends JDialog {
 		ArrayList<FacturaDetalle> detalles = pnProductos.recuperarListaDetalles();
 		//ArrayList<FacturaDetalle> detalles = tbFacturaDetalles.getListaDetalles();
 		try {
-			fac = new Factura(id, clienteId, nombreCliente, numero, fecha, porcDescuento, porcRecargoEquivalencia, impTotal, impRecargo, impIva, dirCorreo, dirFactura, dirEnvio, cobrada, detalles);
+			fac = new Factura(id, cliente, nombreCliente, numero, fecha, porcDescuento, porcRecargoEquivalencia, impTotal, impRecargo, impIva, dirCorreo, dirFactura, dirEnvio, cobrada, detalles);
 		} catch (Exception e) {
 			mostrarMensaje("Error de formulario");
 		}

@@ -41,12 +41,11 @@ public class Main extends JFrame {
 		/* 
 		 * PANEL DE LOGIN
 		 */
-		pnLogin = new LoginPanel();
+		pnLogin = new LoginPanel(userPpal);
 		pnLogin.setVisible(true);
 		pnLogin.setBounds(0, 0, getWidth(), getHeight());
 		getContentPane().add(pnLogin);
-		pnLogin.setLayout(null);
-		pnLogin.setVisible(false);
+		pnLogin.setVisible(true);
 		
 		pnPrincipal = new JPanel();
 		pnPrincipal.setOpaque(false);
@@ -101,6 +100,12 @@ public class Main extends JFrame {
 		JMenu mnFacturas = new JMenu("Facturas");
 		menuBar.add(mnFacturas);
 		JMenuItem mntmNuevaFactura = new JMenuItem("Nueva Factura");
+		mntmNuevaFactura.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				FacturaCompletaDialogo dialogo = new FacturaCompletaDialogo(null);
+				Factura fac = dialogo.mostrar();
+			}
+		});
 		mnFacturas.add(mntmNuevaFactura);
 		JMenuItem mntmListadoDeFacturas = new JMenuItem("Listado de Facturas");
 		mnFacturas.add(mntmListadoDeFacturas);
@@ -130,6 +135,23 @@ public class Main extends JFrame {
 				mostrarPanel("Facturas");
 			}
 		});
+		
+		menuBar.setVisible(false);
+		
+		pnLogin.btnLogin.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				userPpal = pnLogin.login();
+				if (userPpal==null) {
+					System.out.println("Error de Login");
+				} else {
+					System.out.println("Login correcto");
+					setTitle(userPpal.getName());
+					pnLogin.setVisible(false);
+					menuBar.setVisible(true);
+				}
+			}
+		});
+		
 	}
 
 	protected void mostrarPanel(String string) {

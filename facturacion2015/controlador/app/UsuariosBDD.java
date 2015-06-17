@@ -45,11 +45,11 @@ public class UsuariosBDD {
 		return tableData;
 	}
 	
-	public ArrayList<Usuario> RecuperaTodos (){
-		return Recupera("");
+	public ArrayList<Usuario> recuperaTodos (){
+		return recupera("");
 	}
 	
-	public ArrayList<Usuario> Recupera(String criterio){
+	public ArrayList<Usuario> recupera(String criterio){
 		criterio = "WHERE usuarios.email LIKE '%" + criterio + "%'";
 		String sql = "SELECT * FROM usuarios " + criterio + " ORDER BY usuarios.email";
 		System.out.println(sql);
@@ -119,7 +119,7 @@ public class UsuariosBDD {
 		return u;
 	}
 	
-	public int Grabar(Usuario u) {
+	public int grabar(Usuario u) {
 		int respuesta = -1;
 		String sql = "";
 		if (u.getId()==0) {
@@ -173,7 +173,7 @@ public class UsuariosBDD {
 		return respuesta;
 	}
 	
-	public boolean Eliminar (int id) {
+	public boolean eliminar (int id) {
 		boolean respuesta = false;
 		String 	sql = "DELETE FROM usuarios " +
 				"WHERE usuarios.id = " + id;

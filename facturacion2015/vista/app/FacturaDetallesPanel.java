@@ -42,9 +42,9 @@ public class FacturaDetallesPanel extends JPanel {
 	private JTable prodTabla;
 	private ProductosCombo cbProducto;
 	private JSpinner numCantidad;
-	private JTextField txtIvas;
+	private JSpinner txtIvas;
 	private int facturaId;
-	private JTextField txtBases;
+	private JSpinner txtBases;
 	
 //	private DefaultTableModel dtm;
 	
@@ -116,11 +116,11 @@ public class FacturaDetallesPanel extends JPanel {
 				FormFactory.UNRELATED_GAP_COLSPEC,
 				FormFactory.DEFAULT_COLSPEC,
 				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-				FormFactory.PREF_COLSPEC,
+				ColumnSpec.decode("default:grow"),
 				FormFactory.UNRELATED_GAP_COLSPEC,
 				FormFactory.PREF_COLSPEC,
 				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
-				FormFactory.PREF_COLSPEC,},
+				ColumnSpec.decode("pref:grow"),},
 			new RowSpec[] {
 				RowSpec.decode("26px"),}));
 		
@@ -133,20 +133,18 @@ public class FacturaDetallesPanel extends JPanel {
 		JLabel lblBase = new JLabel("Productos");
 		pnButtons.add(lblBase, "4, 1, right, fill");
 		
-		txtBases = new JTextField();
-		txtBases.setHorizontalAlignment(SwingConstants.RIGHT);
-		txtBases.setEditable(false);
-		pnButtons.add(txtBases, "6, 1, right, fill");
-		txtBases.setColumns(10);
+		txtBases = new JSpinner();
+		txtBases.setEnabled(false);
+		txtBases.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
+		pnButtons.add(txtBases, "6, 1, fill, fill");
 		JLabel lblTotal = new JLabel("IVA");
 		pnButtons.add(lblTotal, "8, 1, fill, center");
 		
-		txtIvas = new JTextField();
-		txtIvas.setEditable(false);
-		txtIvas.setHorizontalAlignment(SwingConstants.RIGHT);
+		txtIvas = new JSpinner();
+		txtIvas.setEnabled(false);
+		txtIvas.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
 		txtIvas.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		pnButtons.add(txtIvas, "10, 1, right, fill");
-		txtIvas.setColumns(10);
+		pnButtons.add(txtIvas, "10, 1, fill, fill");
 		
 		/*
 		 * ESCUCHADORES
@@ -210,16 +208,7 @@ public class FacturaDetallesPanel extends JPanel {
 		
 		btnTotalizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				DefaultTableModel dtm = (DefaultTableModel) prodTabla.getModel();
-				double sumaBases = 0;
-				double sumaIvas = 0;
-				for (int i = 0; i < dtm.getRowCount(); i++) {
-					FacturaDetalle fd = obtenerFacturaDetalleEn(i);
-					sumaIvas += (fd.getCantidad() * fd.getProdIva());
-					sumaBases += (fd.getCantidad() * fd.getProdPrecio());
-				}
-				txtIvas.setText(""+sumaIvas);
-				txtBases.setText(""+sumaBases);
+				calculaImportesProductos();
 			}
 		});
 		
@@ -236,13 +225,26 @@ public class FacturaDetallesPanel extends JPanel {
 		cbProducto.recargarCombo();
 		
 	}
-	
+
 	/*
 	 * 
 	 * METODOS PRIVADOS
 	 *
 	 *
 	*/
+	
+	private void calculaImportesProductos() {
+		DefaultTableModel dtm = (DefaultTableModel) prodTabla.getModel();
+		double sumaBases = 0;
+		double sumaIvas = 0;
+		for (int i = 0; i < dtm.getRowCount(); i++) {
+			FacturaDetalle fd = obtenerFacturaDetalleEn(i);
+			sumaIvas += (fd.getCantidad() * fd.getProdIva());
+			sumaBases += (fd.getCantidad() * fd.getProdPrecio());
+		}
+		txtIvas.setValue(sumaIvas);
+		txtBases.setValue(sumaBases);
+	}
 	
 	protected FacturaDetalle obtenerFacturaDetalleEn(int row) {
 		FacturaDetalle facDet = (FacturaDetalle) prodTabla.getValueAt(row, 0);
@@ -275,10 +277,29 @@ public class FacturaDetallesPanel extends JPanel {
 		datos.addRow(filaData);
 	}
 	
+	/*
+	 * 
+	 * METODOS PUBLICOS
+	 *
+	 *
+	*/
+	
+	public double obtenerImporteProductos() {
+		calculaImportesProductos();
+		return (double) txtBases.getValue();
+	}
+	
+	public double obtenerImporteIVA() {
+		calculaImportesProductos();
+		return (double) txtIvas.getValue();
+	}
+	
 	public void ponerListaDetalles(ArrayList<FacturaDetalle> listaDetalles) {
 		vaciar();
-		for (FacturaDetalle fd : listaDetalles) {
-			agregarFacturaDetalle(fd);
+		if (listaDetalles!=null) {
+			for (FacturaDetalle fd : listaDetalles) {
+				agregarFacturaDetalle(fd);
+			}
 		}
 	}
 	

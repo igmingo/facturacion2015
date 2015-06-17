@@ -21,8 +21,7 @@ public class ProductosBDD {
 	//METODO PUBLICO
 	
 	public ArrayList<Producto> recuperaPorFiltro(String filtro) {
-		String sql = "";
-		sql += "SELECT * FROM productos WHERE ";
+		String sql = "SELECT * FROM productos WHERE ";
 		sql += filtro==null || filtro.length()==0?"1":filtro;
 		sql += " ORDER BY productos.id";
 		System.out.println(sql);
@@ -56,7 +55,7 @@ public class ProductosBDD {
 	}
 	
 	public ArrayList<Producto> recuperaPorNombre(String criterio) {
-		String filtro = "WHERE productos.nombre LIKE '%" + criterio + "%' ";
+		String filtro = "productos.nombre LIKE '%" + criterio + "%' ";
 		//filtro += "OR productos.descripcion LIKE '%" + criterio + "%'";
 		return recuperaPorFiltro(filtro);
 	}
@@ -67,7 +66,7 @@ public class ProductosBDD {
 	
 	public Producto recuperaPorId(int id){
 		if (id != 0) {
-			String filtro = "WHERE productos.id = " + id;
+			String filtro = "productos.id = " + id;
 			ArrayList<Producto> lista = recuperaPorFiltro(filtro);
 			return lista.get(0);
 		} else {

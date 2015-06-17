@@ -6,7 +6,7 @@ import javax.swing.JButton;
 
 import java.awt.Font;
 
-public class LoginPanel extends JPanel {
+public class CopyOfLoginPanel extends JPanel {
 	/**
 	 * 
 	 */
@@ -15,42 +15,36 @@ public class LoginPanel extends JPanel {
 	private JPasswordField txtPassword;
 	private Usuario usuarioPanel;
 	public JButton btnLogin;
-	private JPanel panel;
 
-	public LoginPanel() {
+	public CopyOfLoginPanel() {
 		this.usuarioPanel = null;
 		setBounds(0, 0, 474, 425);
 		setLayout(null);
 		
-		panel = new JPanel();
-		panel.setBounds(111, 112, 251, 242);
-		add(panel);
-		panel.setLayout(null);
-		
 		JLabel lblUsuariocorreo = new JLabel("Correo electr\u00F3nico");
-		lblUsuariocorreo.setBounds(1, 0, 250, 26);
-		panel.add(lblUsuariocorreo);
+		lblUsuariocorreo.setBounds(112, 112, 250, 26);
+		add(lblUsuariocorreo);
 		lblUsuariocorreo.setFont(new Font("Dialog", Font.PLAIN, 20));
 		
 		txtEmail = new CorreoField();
-		txtEmail.setBounds(1, 38, 250, 30);
-		panel.add(txtEmail);
+		txtEmail.setBounds(112, 150, 250, 30);
+		add(txtEmail);
 		txtEmail.setColumns(10);
 		
 		JLabel lblContrasea = new JLabel("Contrase\u00F1a");
-		lblContrasea.setBounds(1, 94, 250, 26);
-		panel.add(lblContrasea);
 		lblContrasea.setFont(new Font("Dialog", Font.PLAIN, 20));
+		lblContrasea.setBounds(112, 206, 250, 26);
+		add(lblContrasea);
 		
 		txtPassword = new JPasswordField();
-		txtPassword.setBounds(0, 132, 251, 30);
-		panel.add(txtPassword);
+		txtPassword.setBounds(111, 244, 251, 30);
+		add(txtPassword);
 		txtPassword.setColumns(10);
 		
 		btnLogin = new JButton("Entrar");
-		btnLogin.setBounds(68, 199, 115, 43);
-		panel.add(btnLogin);
 		btnLogin.setFont(new Font("Dialog", Font.PLAIN, 20));
+		btnLogin.setBounds(179, 311, 115, 43);
+		add(btnLogin);
 	}
 
 	public Usuario getUsuarioPanel() {

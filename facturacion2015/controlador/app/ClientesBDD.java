@@ -27,8 +27,9 @@ public class ClientesBDD {
 	//METODO PUBLICO
 	
 	public ArrayList<Cliente> recuperaPorFiltro(String filtro) {
-		String sql = "SELECT * FROM clientes " + filtro
-				+ " ORDER BY clientes.id";
+		String sql = "SELECT * FROM clientes WHERE ";
+		sql += filtro==null || filtro.length()==0?"1":filtro;
+		sql += " ORDER BY clientes.id";
 		System.out.println(sql);
 		ArrayList<Cliente> lista = new ArrayList<>();
 		Connection c = new Conexion().getConection();
@@ -65,18 +66,18 @@ public class ClientesBDD {
 	}
 	
 	public ArrayList<Cliente> recuperaPorNombre(String criterio) {
-		String filtro = "WHERE clientes.nombre LIKE '%" + criterio + "%' ";
+		String filtro = "clientes.nombre LIKE '%" + criterio + "%' ";
 		filtro += "OR clientes.apellidos LIKE '%" + criterio + "%'";
 		return recuperaPorFiltro(filtro);
 	}
 	
 	public ArrayList<Cliente> recuperaTodos(){
-		return recuperaPorFiltro("WHERE 1");
+		return recuperaPorFiltro(null);
 	}
 	
 	public Cliente recuperaPorId(int id){
 		if (id != 0) {
-			String filtro = "WHERE clientes.id = " + id;
+			String filtro = "clientes.id = " + id;
 			ArrayList<Cliente> lista = recuperaPorFiltro(filtro);
 			return lista.get(0);
 		} else {

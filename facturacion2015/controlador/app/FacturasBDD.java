@@ -27,9 +27,8 @@ public class FacturasBDD {
 	//METODO PUBLICO
 	
 	public ArrayList<Factura> recuperaFacturaCompletaPorFiltro(String filtro) {
-		String sql = "";
-		sql += "SELECT * FROM facturas WHERE ";
-		sql += filtro!=null && filtro.length()==0?"1":filtro;
+		String sql = "SELECT * FROM facturas WHERE ";
+		sql += filtro==null || filtro.length()==0?"1":filtro;
 		sql += " ORDER BY facturas.numero";
 		System.out.println(sql);
 		ArrayList<Factura> lista = null;
@@ -71,9 +70,8 @@ public class FacturasBDD {
 	}
 	
 	public ArrayList<Factura> recuperaFacturaSimplePorFiltro(String filtro) {
-		String sql = "";
-		sql += "SELECT * FROM facturas WHERE ";
-		sql += filtro;
+		String sql = "SELECT * FROM facturas WHERE ";
+		sql += filtro==null || filtro.length()==0?"1":filtro;
 		sql += " ORDER BY facturas.numero";
 		System.out.println(sql);
 		ArrayList<Factura> lista = null;
@@ -115,7 +113,7 @@ public class FacturasBDD {
 	}
 	
 	public ArrayList<Factura> recuperaPorNumeroFactura(int numeroFactura) {
-		String filtro = "WHERE facturas.numero = " + numeroFactura;
+		String filtro = "facturas.numero = " + numeroFactura;
 		return recuperaFacturaSimplePorFiltro(filtro);
 	}
 	
@@ -137,7 +135,7 @@ public class FacturasBDD {
 	
 	public Factura recuperaPorId(int id){
 		if (id != 0) {
-			String filtro = "WHERE facturas.id = " + id;
+			String filtro = "facturas.id = " + id;
 			ArrayList<Factura> lista = recuperaFacturaSimplePorFiltro(filtro);
 			return lista.get(0);
 		} else {
@@ -176,9 +174,8 @@ public class FacturasBDD {
 		//Preparo la lista de SQLs
 		ArrayList<String> listaSQLs = new ArrayList<>();
 		int respuesta = -1;
-		String sqlFactura = "";
 		if (fac.getId()==0) {
-			sqlFactura += "INSERT INTO facturas SET " +
+			String sqlFactura = "INSERT INTO facturas SET " +
 					"facturas.clienteId = " + fac.getClienteId() + ", " +
 					"facturas.nombreCliente = " + fac.getNombreCliente() + ", " +
 					"facturas.numero = " + fac.getNumero() + ", " +
@@ -194,7 +191,7 @@ public class FacturasBDD {
 					"facturas.cobrada = " + fac.isCobrada()
 					;
 		} else {
-			sqlFactura = "UPDATE facturas SET " +
+			String sqlFactura = "UPDATE facturas SET " +
 					"facturas.clienteId = " + fac.getClienteId() + ", " +
 					"facturas.nombreCliente = " + fac.getNombreCliente() + ", " +
 					"facturas.numero = " + fac.getNumero() + ", " +
@@ -286,12 +283,11 @@ public class FacturasBDD {
 		// SI LA CONEXION ES VALIDA
 		if (c!=null) {
 			try {
-				c.commit();
+				c.setAutoCommit(false);
 				// INTENTA REALIZAR EL SQL
 				try {
 					// Crea un ESTAMENTO (comando de ejecucion de un sql)
 					Statement comando = c.createStatement();
-					
 					comando.execute(sqlFactura,Statement.RETURN_GENERATED_KEYS);
 					// VAMOS A DEVOLVER EL ID GENERADO, pero el EXECUTE devuelve un RESULTSET
 					ResultSet resultados = comando.getGeneratedKeys();
@@ -309,6 +305,7 @@ public class FacturasBDD {
 						for (String detalleSQL : listaSQLs) {
 							comando.execute(detalleSQL);
 						}
+						c.commit();
 						respuesta = (listaSQLs.size()+1);
 					}
 				} catch (SQLException e) {
@@ -316,6 +313,7 @@ public class FacturasBDD {
 				}
 				//CERRAMOS LA CONEXION
 				try {
+					c.setAutoCommit(false);
 					c.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -324,6 +322,7 @@ public class FacturasBDD {
 				//SI EL COMMIT DA ERROR
 				try {
 					c.rollback();
+					c.setAutoCommit(false);
 					c.close();
 					respuesta = -2;
 				} catch (SQLException e) {

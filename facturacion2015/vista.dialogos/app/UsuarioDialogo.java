@@ -135,7 +135,7 @@ public class UsuarioDialogo extends JDialog {
 	private void eliminar(int id) {
 		int pregunta = JOptionPane.showConfirmDialog(null, "¿Desea eliminar el Usuario?", "Eliminar Usuario", JOptionPane.OK_CANCEL_OPTION);
 		if (pregunta==JOptionPane.OK_OPTION) {
-			boolean eliminado = new UsuariosBDD().Eliminar(id);
+			boolean eliminado = new UsuariosBDD().eliminar(id);
 			mostrarMensaje(eliminado?"Usuario Eliminado.":"No se ha podido eliminar.");
 		}
 	}
@@ -143,7 +143,7 @@ public class UsuarioDialogo extends JDialog {
 	private Usuario salvar(Usuario u) {
 		if (u!=null) {
 			UsuariosBDD db = new UsuariosBDD();
-			int newId = db.Grabar(u);
+			int newId = db.grabar(u);
 			if (newId>=0) {
 				u.setId(newId);
 				ponerPassword(u, new String(txtPassword.getPassword()) );

@@ -96,7 +96,7 @@ public class Paneles extends JPanel {
 					break;
 				case "Facturas":
 				{
-					FacturaDialogo dialogo = new FacturaDialogo(null);
+					FacturaCompletaDialogo dialogo = new FacturaCompletaDialogo(null);
 					Factura fac = dialogo.mostrar();
 					if (fac!=null) {
 						((FacturasTabla) tabla).actualizarTabla(textFiltro.getText());

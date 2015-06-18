@@ -76,7 +76,7 @@ public class FacturasDetallesBDD {
 	
 	public String generaSQL(FacturaDetalle fd) {
 		String sql = "";
-		if (fd.getId()==0) {		
+		if (fd.getId()==0) {
 			sql = "INSERT INTO facturasdetalle SET " +
 					"facturasdetalle.facturaId = " + fd.getFacturaId() + ", " +
 					"facturasdetalle.prodId = " + fd.getProdId() + ", " +
@@ -86,15 +86,19 @@ public class FacturasDetallesBDD {
 					"facturasdetalle.cantidad = " + fd.getCantidad()
 					;
 		} else {
-			sql = "UPDATE facturasdetalle SET " +
-					"facturasdetalle.facturaId = " + fd.getFacturaId() + ", " +
-					"facturasdetalle.prodId = " + fd.getProdId() + ", " +
-					"facturasdetalle.prodNombre = '" + fd.getProdNombre() + "', " +
-					"facturasdetalle.prodPrecio = " + fd.getProdPrecio() + ", " +
-					"facturasdetalle.prodIva = " + fd.getProdIva() + ", " +
-					"facturasdetalle.cantidad = " + fd.getCantidad() + " " +
-					"WHERE facturasdetalle.id = " + fd.getId()
-					;
+			if (fd.getId()>0) {
+				sql = "UPDATE facturasdetalle SET " +
+						"facturasdetalle.facturaId = " + fd.getFacturaId() + ", " +
+						"facturasdetalle.prodId = " + fd.getProdId() + ", " +
+						"facturasdetalle.prodNombre = '" + fd.getProdNombre() + "', " +
+						"facturasdetalle.prodPrecio = " + fd.getProdPrecio() + ", " +
+						"facturasdetalle.prodIva = " + fd.getProdIva() + ", " +
+						"facturasdetalle.cantidad = " + fd.getCantidad() + " " +
+						"WHERE facturasdetalle.id = " + fd.getId()
+						;
+			} else {
+				
+			}
 		}
 		System.out.println(sql);
 		return sql;
@@ -123,15 +127,7 @@ public class FacturasDetallesBDD {
 					"facturasdetalle.cantidad = " + fd.getCantidad()
 					;
 		} else {
-			sql = "UPDATE facturasdetalle SET " +
-					"facturasdetalle.facturaId = " + fd.getFacturaId() + ", " +
-					"facturasdetalle.prodId = " + fd.getProdId() + ", " +
-					"facturasdetalle.prodNombre = '" + fd.getProdNombre() + "', " +
-					"facturasdetalle.prodPrecio = " + fd.getProdPrecio() + ", " +
-					"facturasdetalle.prodIva = " + fd.getProdIva() + ", " +
-					"facturasdetalle.cantidad = " + fd.getCantidad() + " " +
-					"WHERE facturasdetalle.id = " + fd.getId()
-					;
+			sql = "DELETE FROM facturasdetalle " + "WHERE facturasdetalle.id = " + (fd.getId()*-1);
 		}
 		System.out.println(sql);
 		// CREO UNA CONEXION

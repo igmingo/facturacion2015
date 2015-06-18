@@ -36,10 +36,14 @@ public class Main extends JFrame {
 	
 	//LOGIN
 	private LoginPanel pnLogin;
-	private Usuario userPpal = null;
+	private Usuario user = null;
 	
 	public Main() {
-		setBounds(0, 0, 811, 611);
+		user = new Usuario();
+		user.setLoged(true);
+		
+		setResizable(false);
+		setBounds(0, 0, 800, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(null);
 		//ImageIcon fondo = new ImageIcon("./images/fondo.jpg");
@@ -51,11 +55,11 @@ public class Main extends JFrame {
 		/* 
 		 * PANEL DE LOGIN
 		 */
-		pnLogin = new LoginPanel(userPpal);
+		pnLogin = new LoginPanel(user);
 		pnLogin.setVisible(true);
 		pnLogin.setBounds(0, 0, getWidth(), getHeight());
 		getContentPane().add(pnLogin);
-		pnLogin.setVisible(true);
+		pnLogin.setVisible(!user.isLoged());
 		
 		pnPrincipal = new JPanel();
 		pnPrincipal.setOpaque(false);
@@ -108,7 +112,7 @@ public class Main extends JFrame {
 		mnUsuarios.add(mntmAadirUsuario);
 		JMenuItem mntmAdminstracinDeUsuarios = new JMenuItem("Administraci\u00F3n de Usuarios");
 		mnUsuarios.add(mntmAdminstracinDeUsuarios);
-		menuBar.setVisible(false);
+		menuBar.setVisible(user.isLoged());
 		
 		// LISTENERS
 		
@@ -177,12 +181,12 @@ public class Main extends JFrame {
 		
 		pnLogin.btnLogin.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				userPpal = pnLogin.login();
-				if (userPpal==null) {
+				user = pnLogin.login();
+				if (user==null) {
 					System.out.println("Error de Login");
 				} else {
 					System.out.println("Login correcto");
-					setTitle(userPpal.getName());
+					setTitle(user.getName());
 					pnLogin.setVisible(false);
 					menuBar.setVisible(true);
 				}
@@ -193,10 +197,9 @@ public class Main extends JFrame {
 
 	protected void mostrarPanel(String string) {
 		pnPrincipal.removeAll();
-		pnPrincipal.add(new Paneles(userPpal, string));
+		pnPrincipal.add(new Paneles(user, string));
 		pnPrincipal.repaint();
 		pnPrincipal.validate();
-		
 	}
 
 	public static void main(String[] args) {

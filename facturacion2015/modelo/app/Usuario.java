@@ -13,6 +13,9 @@ public class Usuario {
 	//PROPIEDAD QUE INDICA SI EL USUARIO SE HA LOGEADO
 	private boolean Loged;
 	
+	public Usuario() {
+	}
+
 	public Usuario(int id) {
 		this.id = id;
 	}

@@ -91,21 +91,6 @@ public class ClientesBDD {
 		int respuesta = -1;
 		String sql = "";
 		if (cli.getId()==0) {
-			
-//			id int(10) UNSIGNED
-//			nombre varchar(30)
-//			apellidos varchar(30)
-//			nif varchar(9)
-//			dirCorreo mediumtext
-//			dirFactura mediumtext
-//			dirEnvio mediumtext
-//			contacto mediumtext
-//			porcRecargoEquivalencia double
-//			porcDescuento double
-//			fechaAlta date
-//			baja tinyint(1)
-			
-			
 			sql = "INSERT INTO clientes SET " +
 					"clientes.nombre = '" + cli.getNombre() + "', " +
 					"clientes.apellidos = '" + cli.getApellidos() + "', " +

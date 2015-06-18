@@ -87,11 +87,16 @@ public class FacturaDetalle {
 
 	@Override
 	public String toString() {
-		return prodNombre;
+		String nota = "";
+		if (id < 0) {
+			nota = "- ";
+		} else {
+			if (id == 0) {
+			nota = "+ ";
+			}
+		}
+		return nota + prodNombre;
 	}
-    
-    
-
 }
 
 

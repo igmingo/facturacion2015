@@ -6,18 +6,34 @@ import javax.swing.JTextField;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.event.PopupMenuEvent;
 
-public class ProductosCombo extends JComboBox<Producto> {
+public class ProductosComboConFiltro extends JComboBox<Producto> {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private String cbFiltro;
 	
-	public ProductosCombo() {
+	public ProductosComboConFiltro() {
 		cbFiltro = null;
-		setEditable(false);
+		setEditable(true);
 		setSelectedIndex(-1);
-		recargarCombo();
+		
+		addPopupMenuListener(new PopupMenuListener() {
+			public void popupMenuCanceled(PopupMenuEvent e) {
+			}
+			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+			}
+			public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+				if (cbFiltro!=null && cbFiltro.length()>0){
+					setFiltro(((JTextField) getEditor().getEditorComponent()).getText());
+					recargarComboFiltrado();
+				} else {
+					setFiltro(((JTextField) getEditor().getEditorComponent()).getText());
+					recargarComboFiltrado();
+				}
+			}
+		});
+		
 	}
 	
 	/**Recupera el Id del Producto seleccionado
@@ -87,5 +103,9 @@ public class ProductosCombo extends JComboBox<Producto> {
 	public void setFiltro(String f) {
 		this.cbFiltro = f;
 	}
+	
+//	public void recargarCombo() {
+//		recargarCombo("");
+//	}
 
 }

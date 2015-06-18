@@ -43,7 +43,7 @@ public class FacturaDetalleDialogo extends JDialog {
 	
 	private JTextField txtId;
 	private JTextField txtFacturaId;
-	private ProductosCombo cbProd;
+	private ProductosComboConFiltro cbProd;
 	private JTextField txtProdNombre;
 	private JSpinner numProdPrecio;
 	private JSpinner numProdIva;
@@ -106,7 +106,7 @@ public class FacturaDetalleDialogo extends JDialog {
 		JLabel lblProductoId = new JLabel("Producto");
 		form.add(lblProductoId, "2, 6, right, default");
 		
-		cbProd = new ProductosCombo();
+		cbProd = new ProductosComboConFiltro();
 		cbProd.setEditable(true);
 		form.add(cbProd, "4, 6, fill, default");
 		

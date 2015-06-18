@@ -147,15 +147,15 @@ public class FacturasBDD {
 		}
 	}
 	
-	public Integer maximoNumeroFactura () {
+	private Integer maximoNumeroFactura () {
 		Integer numeroMaximo = null;
-		String sql = "SELECT MAX(facturas.numero) as numeroMaximo FROM facturas";
+		String sql = "SELECT MAX(facturas.numero) as numeroMaximo FROM facturacion2015.facturas";
 		System.out.println(sql);
-		Connection c = new Conexion().getConection();
-		if (c != null) {
+		Connection c2 = new Conexion().getConection();
+		if (c2 != null) {
 			try {
 				// Crea un ESTAMENTO (comando de ejecucion de un sql)
-				Statement comando = c.createStatement();
+				Statement comando = c2.createStatement();
 				ResultSet rs = comando.executeQuery(sql);
 				if (rs.first()){
 					numeroMaximo = rs.getInt("numeroMaximo");
@@ -164,7 +164,7 @@ public class FacturasBDD {
 				e.printStackTrace();
 			}
 			try {
-				c.close();
+				c2.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -172,114 +172,99 @@ public class FacturasBDD {
 		return numeroMaximo;	
 	}
 	
-	public int actualizarFacturaCompleta(Factura fac) {
-		//Preparo la lista de SQLs
-		ArrayList<String> listaSQLs = new ArrayList<>();
-		int respuesta = -1;
-		if (fac.getId()==0) {
-			String sqlFactura = "INSERT INTO facturas SET " +
-					"facturas.clienteId = " + fac.getClienteId() + ", " +
-					"facturas.nombreCliente = " + fac.getNombreCliente() + ", " +
-					"facturas.numero = " + fac.getNumero() + ", " +
-					"facturas.fecha = '" + Utilidades.fechaToSQL(fac.getFecha()) + "', " +
-					"facturas.porcDescuento = " + fac.getPorcDescuento() + ", " +
-					"facturas.porcRecargoEquivalencia = " + fac.getPorcRecargoEquivalencia() + ", " +
-					"facturas.impTotal = " + fac.getImpTotal() + ", " +
-					"facturas.impRecargo = " + fac.getImpRecargo() + ", " +
-					"facturas.impIva = " + fac.getImpIva() + ", " +
-					"facturas.dirCorreo = '" + fac.getDirCorreo() + "', " +
-					"facturas.dirFactura = '" + fac.getDirFactura() + "', " +
-					"facturas.dirEnvio = '" + fac.getDirEnvio() + "', " +
-					"facturas.cobrada = " + fac.isCobrada()
-					;
-		} else {
-			String sqlFactura = "UPDATE facturas SET " +
-					"facturas.clienteId = " + fac.getClienteId() + ", " +
-					"facturas.nombreCliente = " + fac.getNombreCliente() + ", " +
-					"facturas.numero = " + fac.getNumero() + ", " +
-					"facturas.fecha = '" + Utilidades.fechaToSQL(fac.getFecha()) + "', " +
-					"facturas.porcDescuento = " + fac.getPorcDescuento() + ", " +
-					"facturas.porcRecargoEquivalencia = " + fac.getPorcRecargoEquivalencia() + ", " +
-					"facturas.impTotal = " + fac.getImpTotal() + ", " +
-					"facturas.impRecargo = " + fac.getImpRecargo() + ", " +
-					"facturas.impIva = " + fac.getImpIva() + ", " +
-					"facturas.dirCorreo = '" + fac.getDirCorreo() + "', " +
-					"facturas.dirFactura = '" + fac.getDirFactura() + "', " +
-					"facturas.dirEnvio = '" + fac.getDirEnvio() + "', " +
-					"facturas.cobrada = " + fac.isCobrada() + " " +
-					"WHERE facturas.id = " + fac.getId()
-					;
-		}
-		//Preparo la lista de SLQ de los detalles
-		for (FacturaDetalle fd : fac.getDetalles()) {
-			int newId = 0;
-			fd.setFacturaId(newId);
-			listaSQLs.add(new FacturasDetallesBDD().generaSQL(fd));
-		}
-		
-		//MOSTRAMOS lista de SQL a realizar con COMMIT
-		for (String MuestraSQL : listaSQLs) {
-			System.out.println(MuestraSQL);
-		}
-		
-		/*
-		// CREO UNA CONEXION
-		Connection c = new Conexion().getConection();
-		// SI LA CONEXION ES VALIDA
-		if (c!=null) {
-			try {
-				c.commit();
-				// INTENTA REALIZAR EL SQL
-				try {
-					// Crea un ESTAMENTO (comando de ejecucion de un sql)
-					Statement comando = c.createStatement();
-					comando.execute(sql);
-					for (String sqlDetalle : listaSQLs) {
-						comando.execute(sqlDetalle);
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				//CERRAMOS LA CONEXION
-				try {
-					c.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			} catch (SQLException e1) {
-				// TODO Bloque catch generado automáticamente
-				try {
-					c.rollback();
-				} catch (SQLException e) {
-					// TODO Bloque catch generado automáticamente
-					e.printStackTrace();
-				}
-			}
-		}
-		*/
-		
-		return respuesta;
-	}
+//	public int actualizarFacturaCompleta(Factura fac) {
+//		//Preparo la lista de SQLs
+//		ArrayList<String> listaSQLs = new ArrayList<>();
+//		int respuesta = -1;
+//		if (fac.getId()==0) {
+//			String sqlFactura = "INSERT INTO facturas SET " +
+//					"facturas.clienteId = " + fac.getClienteId() + ", " +
+//					"facturas.nombreCliente = " + fac.getNombreCliente() + ", " +
+//					"facturas.numero = " + fac.getNumero() + ", " +
+//					"facturas.fecha = '" + Utilidades.fechaToSQL(fac.getFecha()) + "', " +
+//					"facturas.porcDescuento = " + fac.getPorcDescuento() + ", " +
+//					"facturas.porcRecargoEquivalencia = " + fac.getPorcRecargoEquivalencia() + ", " +
+//					"facturas.impTotal = " + fac.getImpTotal() + ", " +
+//					"facturas.impRecargo = " + fac.getImpRecargo() + ", " +
+//					"facturas.impIva = " + fac.getImpIva() + ", " +
+//					"facturas.dirCorreo = '" + fac.getDirCorreo() + "', " +
+//					"facturas.dirFactura = '" + fac.getDirFactura() + "', " +
+//					"facturas.dirEnvio = '" + fac.getDirEnvio() + "', " +
+//					"facturas.cobrada = " + fac.isCobrada()
+//					;
+//		} else {
+//			String sqlFactura = "UPDATE facturas SET " +
+//					"facturas.clienteId = " + fac.getClienteId() + ", " +
+//					"facturas.nombreCliente = " + fac.getNombreCliente() + ", " +
+//					"facturas.numero = " + fac.getNumero() + ", " +
+//					"facturas.fecha = '" + Utilidades.fechaToSQL(fac.getFecha()) + "', " +
+//					"facturas.porcDescuento = " + fac.getPorcDescuento() + ", " +
+//					"facturas.porcRecargoEquivalencia = " + fac.getPorcRecargoEquivalencia() + ", " +
+//					"facturas.impTotal = " + fac.getImpTotal() + ", " +
+//					"facturas.impRecargo = " + fac.getImpRecargo() + ", " +
+//					"facturas.impIva = " + fac.getImpIva() + ", " +
+//					"facturas.dirCorreo = '" + fac.getDirCorreo() + "', " +
+//					"facturas.dirFactura = '" + fac.getDirFactura() + "', " +
+//					"facturas.dirEnvio = '" + fac.getDirEnvio() + "', " +
+//					"facturas.cobrada = " + fac.isCobrada() + " " +
+//					"WHERE facturas.id = " + fac.getId()
+//					;
+//		}
+//		//Preparo la lista de SLQ de los detalles
+//		for (FacturaDetalle fd : fac.getDetalles()) {
+//			int newId = 0;
+//			fd.setFacturaId(newId);
+//			listaSQLs.add(new FacturasDetallesBDD().generaSQL(fd));
+//		}
+//		
+//		//MOSTRAMOS lista de SQL a realizar con COMMIT
+//		for (String MuestraSQL : listaSQLs) {
+//			System.out.println(MuestraSQL);
+//		}
+//		
+//		/*
+//		// CREO UNA CONEXION
+//		Connection c = new Conexion().getConection();
+//		// SI LA CONEXION ES VALIDA
+//		if (c!=null) {
+//			try {
+//				c.commit();
+//				// INTENTA REALIZAR EL SQL
+//				try {
+//					// Crea un ESTAMENTO (comando de ejecucion de un sql)
+//					Statement comando = c.createStatement();
+//					comando.execute(sql);
+//					for (String sqlDetalle : listaSQLs) {
+//						comando.execute(sqlDetalle);
+//					}
+//				} catch (SQLException e) {
+//					e.printStackTrace();
+//				}
+//				//CERRAMOS LA CONEXION
+//				try {
+//					c.close();
+//				} catch (SQLException e) {
+//					e.printStackTrace();
+//				}
+//			} catch (SQLException e1) {
+//				// TODO Bloque catch generado automáticamente
+//				try {
+//					c.rollback();
+//				} catch (SQLException e) {
+//					// TODO Bloque catch generado automáticamente
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+//		*/
+//		
+//		return respuesta;
+//	}
 	
 	public int grabarFacturaCompleta(Factura fac) {
+		
 		//Preparo la lista de SQLs
 		int respuesta = -1;
-		String sqlFactura = "INSERT INTO facturas SET " +
-				"facturas.clienteId = " + fac.getClienteId() + ", " +
-				"facturas.nombreCliente = " + fac.getNombreCliente() + ", " +
-				"facturas.numero = " + fac.getNumero() + ", " +
-				"facturas.fecha = '" + Utilidades.fechaToSQL(fac.getFecha()) + "', " +
-				"facturas.porcDescuento = " + fac.getPorcDescuento() + ", " +
-				"facturas.porcRecargoEquivalencia = " + fac.getPorcRecargoEquivalencia() + ", " +
-				"facturas.impTotal = " + fac.getImpTotal() + ", " +
-				"facturas.impRecargo = " + fac.getImpRecargo() + ", " +
-				"facturas.impIva = " + fac.getImpIva() + ", " +
-				"facturas.dirCorreo = '" + fac.getDirCorreo() + "', " +
-				"facturas.dirFactura = '" + fac.getDirFactura() + "', " +
-				"facturas.dirEnvio = '" + fac.getDirEnvio() + "', " +
-				"facturas.cobrada = " + fac.isCobrada()
-				;
-		
 		// CREO UNA CONEXION
 		Connection c = new Conexion().getConection();
 		// SI LA CONEXION ES VALIDA
@@ -290,26 +275,95 @@ public class FacturasBDD {
 				try {
 					// Crea un ESTAMENTO (comando de ejecucion de un sql)
 					Statement comando = c.createStatement();
-					comando.execute(sqlFactura,Statement.RETURN_GENERATED_KEYS);
-					// VAMOS A DEVOLVER EL ID GENERADO, pero el EXECUTE devuelve un RESULTSET
-					ResultSet resultados = comando.getGeneratedKeys();
-					// Si el conjunto de resultados no es nulo, y coge el proximo elemento (el primero)
-					if (resultados!=null && resultados.next()) {
-						int newID = resultados.getInt(1);
-						//YA TENEMOS EL NEWID de Factura
-						//Preparo la lista de SLQ de los detalles
-						ArrayList<String> listaSQLs = new ArrayList<>();
-						for (FacturaDetalle fd : fac.getDetalles()) {
-							fd.setFacturaId(newID);
-							listaSQLs.add(new FacturasDetallesBDD().generaSQL(fd));
-						}
-						//VAMOS A REALIZAR LAS SQL de los DETALLES
-						for (String detalleSQL : listaSQLs) {
-							comando.execute(detalleSQL);
-						}
-						c.commit();
-						respuesta = (listaSQLs.size()+1);
+					String sqlFactura = "";
+					if (fac.getId()==0) {
+						fac.setNumero(maximoNumeroFactura()+1);
+						System.out.println(fac.getNumero());
+						sqlFactura = "INSERT INTO facturas SET " +
+								"facturas.clienteId = " + fac.getClienteId() + ", " +
+								"facturas.nombreCliente = '" + fac.getNombreCliente() + "', " +
+								"facturas.numero = " + fac.getNumero() + ", " +
+								"facturas.fecha = '" + Utilidades.fechaToSQL(fac.getFecha()) + "', " +
+								"facturas.porcDescuento = " + fac.getPorcDescuento() + ", " +
+								"facturas.porcRecargoEquivalencia = " + fac.getPorcRecargoEquivalencia() + ", " +
+								"facturas.impTotal = " + fac.getImpTotal() + ", " +
+								"facturas.impRecargo = " + fac.getImpRecargo() + ", " +
+								"facturas.impIva = " + fac.getImpIva() + ", " +
+								"facturas.dirCorreo = '" + fac.getDirCorreo() + "', " +
+								"facturas.dirFactura = '" + fac.getDirFactura() + "', " +
+								"facturas.dirEnvio = '" + fac.getDirEnvio() + "', " +
+								"facturas.cobrada = " + fac.isCobrada()
+							;
+					} else {
+						sqlFactura = "UPDATE facturas SET " +
+								"facturas.clienteId = " + fac.getClienteId() + ", " +
+								"facturas.nombreCliente = '" + fac.getNombreCliente() + "', " +
+								"facturas.numero = " + fac.getNumero() + ", " +
+								"facturas.fecha = '" + Utilidades.fechaToSQL(fac.getFecha()) + "', " +
+								"facturas.porcDescuento = " + fac.getPorcDescuento() + ", " +
+								"facturas.porcRecargoEquivalencia = " + fac.getPorcRecargoEquivalencia() + ", " +
+								"facturas.impTotal = " + fac.getImpTotal() + ", " +
+								"facturas.impRecargo = " + fac.getImpRecargo() + ", " +
+								"facturas.impIva = " + fac.getImpIva() + ", " +
+								"facturas.dirCorreo = '" + fac.getDirCorreo() + "', " +
+								"facturas.dirFactura = '" + fac.getDirFactura() + "', " +
+								"facturas.dirEnvio = '" + fac.getDirEnvio() + "', " +
+								"facturas.cobrada = " + fac.isCobrada() + " " +
+								"WHERE facturas.id = " + fac.getId()
+								;
 					}
+					System.out.println(sqlFactura);
+					
+					comando.execute(sqlFactura,Statement.RETURN_GENERATED_KEYS);
+					// COMPRUEBA si estamos en un Insert o en un Update
+					if (fac.getId() != 0){
+						// ES UN UPDATE
+						// DEVUELVE 0 si se ha realizado el UPDATE, y -1 si FALLA
+						respuesta = comando.getUpdateCount()>0?0:-1;
+					} else {
+						// ES UN INSERT
+						// DEVUELVE EL ID GENERADO, o -1 si FALLA
+						ResultSet resultados = comando.getGeneratedKeys();
+						// Si el conjunto de resultados no es nulo, y coge el proximo elemento (el primero)
+						if (resultados!=null && resultados.next()) {
+							int newID = resultados.getInt(1);
+							//YA TENEMOS EL NEWID de Factura
+							//Preparo la lista de SLQ de los detalles
+							ArrayList<String> listaSQLs = new ArrayList<>();
+							for (FacturaDetalle fd : fac.getDetalles()) {
+								fd.setFacturaId(newID);
+								listaSQLs.add(new FacturasDetallesBDD().generaSQL(fd));
+							}
+							//VAMOS A REALIZAR LAS SQL de los DETALLES
+							for (String detalleSQL : listaSQLs) {
+								comando.execute(detalleSQL);
+							}
+							c.commit();
+							respuesta = newID;
+						}
+					}	
+					
+//					comando.execute(sqlFactura,Statement.RETURN_GENERATED_KEYS);
+//					// VAMOS A DEVOLVER EL ID GENERADO, pero el EXECUTE devuelve un RESULTSET
+//					ResultSet resultados = comando.getGeneratedKeys();
+//					// Si el conjunto de resultados no es nulo, y coge el proximo elemento (el primero)
+//					if (resultados!=null && resultados.next()) {
+//						int newID = resultados.getInt(1);
+//						//YA TENEMOS EL NEWID de Factura
+//						//Preparo la lista de SLQ de los detalles
+//						ArrayList<String> listaSQLs = new ArrayList<>();
+//						for (FacturaDetalle fd : fac.getDetalles()) {
+//							fd.setFacturaId(newID);
+//							listaSQLs.add(new FacturasDetallesBDD().generaSQL(fd));
+//						}
+//						//VAMOS A REALIZAR LAS SQL de los DETALLES
+//						for (String detalleSQL : listaSQLs) {
+//							comando.execute(detalleSQL);
+//						}
+//						c.commit();
+//						respuesta = newID;
+//					}
+					
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}

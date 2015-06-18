@@ -10,12 +10,15 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
 
+import javax.swing.DefaultCellEditor;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JSpinner;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableColumn;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -40,7 +43,7 @@ public class FacturaDetallesPanel extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 	private JTable prodTabla;
-	private ProductosCombo cbProducto;
+	private ProductosComboConFiltro cbProducto;
 	private JSpinner numCantidad;
 	private JSpinner txtIvas;
 	private int facturaId;
@@ -62,11 +65,12 @@ public class FacturaDetallesPanel extends JPanel {
 				ColumnSpec.decode("default:grow"),
 				FormFactory.UNRELATED_GAP_COLSPEC,
 				FormFactory.MIN_COLSPEC,
+				FormFactory.MIN_COLSPEC,
 				FormFactory.MIN_COLSPEC,},
 			new RowSpec[] {
 				FormFactory.DEFAULT_ROWSPEC,}));
 		
-		cbProducto = new ProductosCombo();
+		cbProducto = new ProductosComboConFiltro();
 		form.add(cbProducto, "1, 1, fill, default");
 		
 		JLabel lblCantidad = new JLabel("Cantidad");
@@ -76,12 +80,27 @@ public class FacturaDetallesPanel extends JPanel {
 		numCantidad.setModel(new SpinnerNumberModel(new Integer(1), new Integer(1), null, new Integer(1)));
 		form.add(numCantidad, "4, 1, fill, default");
 		
-		JButton btnAgregar = new JButton("Agregar");
+		JButton btnAgregar = new JButton("+");
 		form.add(btnAgregar, "6, 1, fill, center");
 		
-		JButton btnEliminar = new JButton("Eliminar");
-
-		form.add(btnEliminar, "7, 1, fill, center");
+		JButton btnEliminar = new JButton("-");
+		
+				form.add(btnEliminar, "7, 1, fill, center");
+				
+				JButton btnBorrarTabla = new JButton("Vaciar Tabla");
+				form.add(btnBorrarTabla, "8, 1");
+				
+				btnBorrarTabla.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						vaciar();
+					}
+				});
+				
+				btnEliminar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						eliminarFilaSeleccionada();
+					}
+				});
 		
 		JScrollPane pnTable = new JScrollPane();
 		add(pnTable, BorderLayout.CENTER);
@@ -89,7 +108,7 @@ public class FacturaDetallesPanel extends JPanel {
 		prodTabla = new JTable();
 		prodTabla.setModel(new DefaultTableModel(
 			new Object[][] {
-				{null, null, null, null},
+				{null, null, null, null, null},
 			},
 			new String[] {
 				"Producto", "Precio", "IVA", "Cantidad"
@@ -108,13 +127,13 @@ public class FacturaDetallesPanel extends JPanel {
 		prodTabla.getColumnModel().getColumn(1).setMaxWidth(100);
 		pnTable.setViewportView(prodTabla);
 		
+		//TableColumn ColumnaCombo = prodTabla.getColumnModel().getColumn(4);
+		//ColumnaCombo.setCellEditor(new DefaultCellEditor(new ProductosCombo()));
+		
 		JPanel pnButtons = new JPanel();
 		add(pnButtons, BorderLayout.SOUTH);
 		pnButtons.setLayout(new FormLayout(new ColumnSpec[] {
-				FormFactory.DEFAULT_COLSPEC,
-				ColumnSpec.decode("default:grow"),
-				FormFactory.UNRELATED_GAP_COLSPEC,
-				FormFactory.DEFAULT_COLSPEC,
+				FormFactory.PREF_COLSPEC,
 				FormFactory.LABEL_COMPONENT_GAP_COLSPEC,
 				ColumnSpec.decode("default:grow"),
 				FormFactory.UNRELATED_GAP_COLSPEC,
@@ -124,27 +143,21 @@ public class FacturaDetallesPanel extends JPanel {
 			new RowSpec[] {
 				RowSpec.decode("26px"),}));
 		
-		JButton btnBorrarTabla = new JButton("Borrar Tabla");
-		pnButtons.add(btnBorrarTabla, "1, 1, fill, fill");
-		
-		JButton btnTotalizar = new JButton("Totalizar");
-		pnButtons.add(btnTotalizar, "2, 1, fill, fill");
-		
-		JLabel lblBase = new JLabel("Productos");
-		pnButtons.add(lblBase, "4, 1, right, fill");
+		JLabel lblBase = new JLabel("Importe productos");
+		pnButtons.add(lblBase, "1, 1, right, fill");
 		
 		txtBases = new JSpinner();
 		txtBases.setEnabled(false);
 		txtBases.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
-		pnButtons.add(txtBases, "6, 1, fill, fill");
-		JLabel lblTotal = new JLabel("IVA");
-		pnButtons.add(lblTotal, "8, 1, fill, center");
+		pnButtons.add(txtBases, "3, 1, fill, fill");
+		JLabel lblTotal = new JLabel("Importe IVA");
+		pnButtons.add(lblTotal, "5, 1, fill, center");
 		
 		txtIvas = new JSpinner();
 		txtIvas.setEnabled(false);
 		txtIvas.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(1)));
 		txtIvas.setAlignmentX(Component.RIGHT_ALIGNMENT);
-		pnButtons.add(txtIvas, "10, 1, fill, fill");
+		pnButtons.add(txtIvas, "7, 1, fill, fill");
 		
 		/*
 		 * ESCUCHADORES
@@ -156,7 +169,7 @@ public class FacturaDetallesPanel extends JPanel {
 				System.out.println(e);
 				if (e.getKeyChar()==KeyEvent.VK_DELETE || e.getKeyChar()==KeyEvent.VK_BACK_SPACE) {
 					JTable t = (JTable) e.getSource();
-					eliminarFilaSeleccionada(t);
+					eliminarFilaSeleccionada();
 				}
 			}
 		});
@@ -186,12 +199,6 @@ public class FacturaDetallesPanel extends JPanel {
 		 * BOTONES
 		 */
 		
-		btnEliminar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				eliminarFilaSeleccionada(prodTabla);
-			}
-		});
-		
 		btnAgregar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Producto producto = (Producto) cbProducto.getSelectedItem();
@@ -203,18 +210,6 @@ public class FacturaDetallesPanel extends JPanel {
 
 				//SpinnerNumberModel a = (SpinnerNumberModel) numCantidad.getModel();
 				//numCantidad.setValue(a.getMinimum());
-			}
-		});
-		
-		btnTotalizar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				calculaImportesProductos();
-			}
-		});
-		
-		btnBorrarTabla.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				vaciar();
 			}
 		});
 		
@@ -294,6 +289,10 @@ public class FacturaDetallesPanel extends JPanel {
 		return (double) txtIvas.getValue();
 	}
 	
+	/**Pone ArrayList completo de Detalles de Factura en el modelo de la TABLA
+	 * Primero borra todos los datos del modelo.
+	 * @param listaDetalles
+	 */
 	public void ponerListaDetalles(ArrayList<FacturaDetalle> listaDetalles) {
 		vaciar();
 		if (listaDetalles!=null) {
@@ -313,12 +312,21 @@ public class FacturaDetallesPanel extends JPanel {
 		return listaDetalles;
 	}
 	
-	protected void eliminarFilaSeleccionada(JTable t) {
-		int row = t.getSelectedRow();
+	protected void eliminarFilaSeleccionada() {
+		eliminarRow(prodTabla.getSelectedRow());
+	}
+
+	private void eliminarRow(int row) {
 		if (row>=0) {
-			System.out.println(row);
-			DefaultTableModel dtm = (DefaultTableModel) t.getModel();
-			dtm.removeRow(row);
+			FacturaDetalle fd = obtenerFacturaDetalleEn(row);
+			int id = fd.getId();
+			if (id==0){
+				DefaultTableModel dtm = (DefaultTableModel) prodTabla.getModel();
+				dtm.removeRow(row);
+			} else {
+				fd.setId(id*-1);
+				prodTabla.repaint();
+			}
 		}
 	}
 

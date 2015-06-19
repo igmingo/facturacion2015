@@ -15,7 +15,7 @@ public class Conexion
 				Driver driver = new com.mysql.jdbc.Driver();
 				DriverManager.registerDriver(driver);
 				// El el nombre de la base de datos es 'agenda', 'root' es el administrador de la BD, '' sin contraseña
-				conexionActual = DriverManager.getConnection("jdbc:mysql://localhost:3306/facturacion2015", "root", "");
+				conexionActual = DriverManager.getConnection("jdbc:mysql://localhost:3306/facturacion2015", "root", "root");
 		    }
 		    catch (SQLException ex) 
 		    {

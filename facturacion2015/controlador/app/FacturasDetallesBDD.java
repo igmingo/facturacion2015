@@ -97,7 +97,7 @@ public class FacturasDetallesBDD {
 						"WHERE facturasdetalle.id = " + fd.getId()
 						;
 			} else {
-				
+				sql = "DELETE FROM facturasdetalle " + "WHERE facturasdetalle.id = " + (fd.getId()*-1);
 			}
 		}
 		System.out.println(sql);
@@ -106,49 +106,19 @@ public class FacturasDetallesBDD {
 	
 	public int grabar(FacturaDetalle fd) {
 		int respuesta = -1;
-		String sql = "";
-		if (fd.getId()==0) {		
-//			TABLA facturasdetalle BASE DE DATOS
-//			
-//			id int(10) UNSIGNED No auto_increment
-//			facturaId int(10) UNSIGNED No facturas -> id
-//			prodId int(10) UNSIGNED No productos -> id
-//			prodNombre varchar(30) No
-//			prodPrecio double No
-//			prodIva double No
-//			cantidad int(11) No
-			
-			sql = "INSERT INTO facturasdetalle SET " +
-					"facturasdetalle.facturaId = " + fd.getFacturaId() + ", " +
-					"facturasdetalle.prodId = " + fd.getProdId() + ", " +
-					"facturasdetalle.prodNombre = '" + fd.getProdNombre() + "', " +
-					"facturasdetalle.prodPrecio = " + fd.getProdPrecio() + ", " +
-					"facturasdetalle.prodIva = " + fd.getProdIva() + ", " +
-					"facturasdetalle.cantidad = " + fd.getCantidad()
-					;
-		} else {
-			sql = "DELETE FROM facturasdetalle " + "WHERE facturasdetalle.id = " + (fd.getId()*-1);
-		}
+		String sql = generaSQL(fd);
 		System.out.println(sql);
-		// CREO UNA CONEXION
-		Connection c = new Conexion().getConection();
-		// SI LA CONEXION ES VALIDA
-		if (c!=null) {
-			// INTENTA REALIZAR EL SQL
+		Connection cnx = new Conexion().getConection();
+		if (cnx!=null) {
 			try {
-				// Crea un ESTAMENTO (comando de ejecucion de un sql)
-				Statement comando = c.createStatement();
+				Statement comando = cnx.createStatement();
 				comando.execute(sql,Statement.RETURN_GENERATED_KEYS);
-				// COMPRUEBA si estamos en un Insert o en un Update
 				if (fd.getId() != 0){
-					// ES UN UPDATE
 					respuesta = comando.getUpdateCount()>0?0:-1;
 				} else {
-					// VAMOS A DEVOLVER EL ID GENERADO, pero el EXECUTE devuelve un RESULTSET
-					ResultSet resultados = comando.getGeneratedKeys();
-					// Si el conjunto de resultados no es nulo, y coge el proximo elemento (el primero)
-					if (resultados!=null && resultados.next()) {
-						respuesta = resultados.getInt(1);
+					ResultSet keys = comando.getGeneratedKeys();
+					if (keys!=null && keys.next()) {
+						respuesta = keys.getInt(1);
 					}
 				}
 			} catch (SQLException e) {
@@ -157,7 +127,7 @@ public class FacturasDetallesBDD {
 		}
 		//CERRAMOS LA CONEXION
 		try {
-			c.close();
+			cnx.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -18,13 +18,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 
 import java.awt.event.HierarchyBoundsAdapter;
 import java.awt.event.HierarchyEvent;
+
 import javax.swing.JDesktopPane;
+
 import java.awt.Color;
 
 public class Main extends JFrame {
@@ -227,8 +230,10 @@ public class Main extends JFrame {
 //			e.printStackTrace();
 //		}
 		
-		Main main = new Main();
-		main.mostrar();
+		ArrayList<Factura> lista = new FacturasBDD().recuperaFacturaPorFiltro_NEW(null);
+		
+		//Main main = new Main();
+		//main.mostrar();
 	}
 	
 	private void mostrar() {

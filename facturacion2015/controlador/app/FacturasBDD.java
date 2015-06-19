@@ -6,9 +6,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Vector;
 
-public class FacturasBDD {
+public class FacturasBDD extends FacturacionBDD {
 	// TABLA facturas BASE DE DATOS
 	// id int(10) UNSIGNED No auto_increment
 	// clienteId int(10) UNSIGNED No clientes -> id
@@ -26,6 +27,18 @@ public class FacturasBDD {
 
 	// METODO PUBLICO
 
+	public ArrayList<Factura> recuperaFacturaPorFiltro_NEW(String filtro) {
+		String sql = "SELECT * FROM facturas WHERE ";
+		sql += filtro == null || filtro.length() == 0 ? "1" : filtro;
+		sql += " ORDER BY facturas.numero";
+		ArrayList<Factura> listaFacturas = null;
+		ArrayList<Object> resultados = consultaSQL(sql);
+		
+		System.out.println(resultados);
+
+		return listaFacturas;
+	}
+	
 	public ArrayList<Factura> recuperaFacturaPorFiltro(String filtro) {
 		String sql = "SELECT * FROM facturas WHERE ";
 		sql += filtro == null || filtro.length() == 0 ? "1" : filtro;
@@ -122,7 +135,7 @@ public class FacturasBDD {
 	}
 
 	public ArrayList<Factura> recuperaTodas() {
-		return recuperaFacturaPorFiltro("WHERE 1");
+		return recuperaFacturaPorFiltro(null);
 	}
 
 	public Factura recuperaFacturaCompletaPorId(int id) {
@@ -352,11 +365,15 @@ public class FacturasBDD {
 							fd.setFacturaId(fac.getId());
 							listaSQLs.add(new FacturasDetallesBDD().generaSQL(fd));
 						}
+						ArrayList<FacturaDetalle> listaDetalles = fac.getDetalles();
 						// VAMOS A REALIZAR LAS SQL de los DETALLES, empezando en la 1
-						for (int i = 1; i < listaSQLs.size(); i++) {
-							String detalleSQL = listaSQLs.get(i);
+						for (int i = 1; i < listaDetalles.size(); i++) {
+							FacturaDetalle facDet = listaDetalles.get(i);
+							facDet.setFacturaId(fac.getId());
+							String detalleSQL = new FacturasDetallesBDD().generaSQL(facDet);
 							System.out.println(detalleSQL);
 							sql.execute(detalleSQL);
+							new ProductosBDD().restarStock(cnx, facDet.getProdId(), facDet.getCantidad());
 						}
 					}
 					cnx.commit();

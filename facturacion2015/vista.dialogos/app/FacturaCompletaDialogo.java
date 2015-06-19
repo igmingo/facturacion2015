@@ -342,7 +342,7 @@ public class FacturaCompletaDialogo extends JDialog {
 //		});
 		
 		
-		//factura vale null o una Factura
+		//ES UNA FACTURA EXISTENTE O UNA FACTURA NUEVA
 		if (this.factura!=null) {
 			//MODIFICAR FACTURA
 			setTitle("Modificar Factura");
@@ -355,9 +355,10 @@ public class FacturaCompletaDialogo extends JDialog {
 				} catch (Exception e1) {
 				}
 			}
-			
 			pnProductos = new FacturaDetallesPanel(factura.getId());
 			panel.add(pnProductos, "4, 5, fill, fill");
+			setForm();
+			calcular();
 		} else {
 			//NUEVA FACTURA
 			setTitle("Nueva Factura");
@@ -365,8 +366,8 @@ public class FacturaCompletaDialogo extends JDialog {
 			factura.setId(0);
 			pnProductos = new FacturaDetallesPanel(factura.getId());
 			panel.add(pnProductos, "4, 5, fill, fill");
+			setForm();
 		}
-		setForm();
 	}
 	
 	private void calcular() {

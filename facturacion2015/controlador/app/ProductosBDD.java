@@ -8,7 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Vector;
 
-public class ProductosBDD {
+public class ProductosBDD extends FacturacionBDD {
 	// TABLA productos BASE DE DATOS
 //	id int(11)
 //	nombre varchar(30)
@@ -19,6 +19,19 @@ public class ProductosBDD {
 //	baja tinyint(1)
 	
 	//METODO PUBLICO
+	
+	/** Resta el Stock la cantidad indicada
+	 * @param cnx es la Conexion activa
+	 * @param prodId es el ID del Producto que vamos a bajar el stock
+	 * @param cantidad es la cantidad que va a ser restada (debe ser positiva)
+	 * @return
+	 */
+	public Integer restarStock (Connection cnx, int prodId, int cantidad) {
+		String sql = "UPDATE productos SET productos.stock = productos.stock - " + cantidad + " WHERE productos.id = " + prodId;
+		System.out.println(sql);
+		ejecutaSQL(cnx, sql);
+		return cantidad;
+	}
 	
 	public ArrayList<Producto> recuperaPorFiltro(String filtro) {
 		String sql = "SELECT * FROM productos WHERE ";

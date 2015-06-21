@@ -37,7 +37,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 
-public class FacturaDetallesPanel extends JPanel {
+public class DetallesPanel extends JPanel {
 	/**
 	 * 
 	 */
@@ -51,7 +51,7 @@ public class FacturaDetallesPanel extends JPanel {
 	
 //	private DefaultTableModel dtm;
 	
-	public FacturaDetallesPanel(int facId) {
+	public DetallesPanel(int facId) {
 		this.facturaId = facId;
 		//setBounds(new Rectangle(0, 0, 550, 300));
 		setLayout(new BorderLayout(0, 0));
@@ -108,14 +108,14 @@ public class FacturaDetallesPanel extends JPanel {
 		prodTabla = new JTable();
 		prodTabla.setModel(new DefaultTableModel(
 			new Object[][] {
-				{null, null, null, null, null},
+				{null, null, null, null, null, null},
 			},
 			new String[] {
-				"Producto", "Precio", "IVA", "Cantidad"
+				"Producto", "Precio", "IVA", "Cantidad", "Operación"
 			}
 		) {
 			Class[] columnTypes = new Class[] {
-					FacturaDetalle.class, Double.class, Double.class, Integer.class
+					Detalle.class, Double.class, Double.class, Integer.class, Integer.class
 			};
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
@@ -181,10 +181,10 @@ public class FacturaDetallesPanel extends JPanel {
 				if (me.getClickCount()>=2) {
 					int row = prodTabla.getSelectedRow();
 					if (row!=-1) {
-						FacturaDetalle fd = obtenerFacturaDetalleEn(row);
+						Detalle fd = obtenerFacturaDetalleEn(row);
 						System.out.println(fd);
-							FacturaDetalleDialogo dialog = new FacturaDetalleDialogo (fd);
-							FacturaDetalle c = dialog.mostrar();
+							DetalleDialogo dialog = new DetalleDialogo (fd);
+							Detalle c = dialog.mostrar();
 							if (c!=null) {
 								ponerFacturaDetalle(row, c);
 								prodTabla.validate();
@@ -203,7 +203,7 @@ public class FacturaDetallesPanel extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				Producto producto = (Producto) cbProducto.getSelectedItem();
 				if (producto!=null) {
-					FacturaDetalle fd = new FacturaDetalle(0, facturaId, producto.getId(), producto.getNombre(), producto.getPrecio(), producto.getIva(), (int) numCantidad.getValue());
+					Detalle fd = new Detalle(0, facturaId, producto.getId(), producto.getNombre(), producto.getPrecio(), producto.getIva(), (int) numCantidad.getValue());
 					agregarFacturaDetalle(fd);
 					cbProducto.setSelectedIndex(-1);
 				}				
@@ -233,7 +233,7 @@ public class FacturaDetallesPanel extends JPanel {
 		double sumaBases = 0;
 		double sumaIvas = 0;
 		for (int i = 0; i < dtm.getRowCount(); i++) {
-			FacturaDetalle fd = obtenerFacturaDetalleEn(i);
+			Detalle fd = obtenerFacturaDetalleEn(i);
 			sumaIvas += (fd.getCantidad() * fd.getProdIva());
 			sumaBases += (fd.getCantidad() * fd.getProdPrecio());
 		}
@@ -241,15 +241,15 @@ public class FacturaDetallesPanel extends JPanel {
 		txtBases.setValue(sumaBases);
 	}
 	
-	protected FacturaDetalle obtenerFacturaDetalleEn(int row) {
-		FacturaDetalle facDet = (FacturaDetalle) prodTabla.getValueAt(row, 0);
+	protected Detalle obtenerFacturaDetalleEn(int row) {
+		Detalle facDet = (Detalle) prodTabla.getValueAt(row, 0);
 		facDet.setProdPrecio((double) prodTabla.getValueAt(row, 1));
 		facDet.setProdIva((double) prodTabla.getValueAt(row, 2));
 		facDet.setCantidad((int) prodTabla.getValueAt(row, 3));
 		return facDet;
 	}
 	
-	private void ponerFacturaDetalle(int row, FacturaDetalle fd) {
+	private void ponerFacturaDetalle(int row, Detalle fd) {
 		//"Detalle", "Precio", "IVA", "Cantidad"
 		Vector<Object> filaData = new Vector<>();
 		filaData.add(fd);
@@ -261,7 +261,7 @@ public class FacturaDetallesPanel extends JPanel {
 		datos.insertRow(row, filaData);
 	}
 	
-	private void agregarFacturaDetalle(FacturaDetalle fd) {
+	private void agregarFacturaDetalle(Detalle fd) {
 		//"Detalle", "Precio", "IVA", "Cantidad"
 		Vector<Object> filaData = new Vector<>();
 		filaData.add(fd);
@@ -293,20 +293,20 @@ public class FacturaDetallesPanel extends JPanel {
 	 * Primero borra todos los datos del modelo.
 	 * @param listaDetalles
 	 */
-	public void ponerListaDetalles(ArrayList<FacturaDetalle> listaDetalles) {
+	public void ponerListaDetalles(ArrayList<Detalle> listaDetalles) {
 		vaciar();
 		if (listaDetalles!=null) {
-			for (FacturaDetalle fd : listaDetalles) {
+			for (Detalle fd : listaDetalles) {
 				agregarFacturaDetalle(fd);
 			}
 		}
 	}
 	
-	public ArrayList<FacturaDetalle> recuperarListaDetalles() {
+	public ArrayList<Detalle> recuperarListaDetalles() {
 		DefaultTableModel datos = (DefaultTableModel) prodTabla.getModel();
-		ArrayList<FacturaDetalle> listaDetalles = new ArrayList<>();
+		ArrayList<Detalle> listaDetalles = new ArrayList<>();
 		for (int i = 0; i < datos.getRowCount(); i++) {
-			FacturaDetalle fd = (FacturaDetalle) datos.getValueAt(i, 0);
+			Detalle fd = (Detalle) datos.getValueAt(i, 0);
 			listaDetalles.add(fd);
 		}
 		return listaDetalles;
@@ -318,7 +318,7 @@ public class FacturaDetallesPanel extends JPanel {
 
 	private void eliminarRow(int row) {
 		if (row>=0) {
-			FacturaDetalle fd = obtenerFacturaDetalleEn(row);
+			Detalle fd = obtenerFacturaDetalleEn(row);
 			int id = fd.getId();
 			if (id==0){
 				DefaultTableModel dtm = (DefaultTableModel) prodTabla.getModel();

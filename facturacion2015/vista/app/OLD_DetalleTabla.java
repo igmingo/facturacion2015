@@ -16,14 +16,14 @@ import javax.swing.table.DefaultTableModel;
 //prodIva double No
 //cantidad int(11) No
 
-public class FacturasDetalleTabla_old extends JTable {
+public class OLD_DetalleTabla extends JTable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -371381706871909469L;
 	private String filtro;
 	
-	public FacturasDetalleTabla_old(String f) {
+	public OLD_DetalleTabla(String f) {
 		this.filtro = f;
 		setModel(new DefaultTableModel(
 			new Object[][] {
@@ -34,7 +34,7 @@ public class FacturasDetalleTabla_old extends JTable {
 			}
 		) {
 			Class[] columnTypes = new Class[] {
-				FacturaDetalle.class, Double.class, Double.class, Integer.class
+				Detalle.class, Double.class, Double.class, Integer.class
 			};
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
@@ -53,9 +53,9 @@ public class FacturasDetalleTabla_old extends JTable {
 			public void mouseClicked(MouseEvent arg0) {
 				int row = getSelectedRow();
 				if (row!=-1) {
-					FacturaDetalle fd = (FacturaDetalle) getValueAt(row, 0);
-						FacturaDetalleDialogo dialog = new FacturaDetalleDialogo (fd);
-						FacturaDetalle c = dialog.mostrar();
+					Detalle fd = (Detalle) getValueAt(row, 0);
+						DetalleDialogo dialog = new DetalleDialogo (fd);
+						Detalle c = dialog.mostrar();
 						if (c!=null) {
 							actualizarTablaPorDb();
 						}
@@ -82,7 +82,7 @@ public class FacturasDetalleTabla_old extends JTable {
 	}
 	
 	public void actualizarTablaPorDb() {
-		ArrayList<Vector<Object>> tabla = new FacturasDetallesBDD().recuperaTablaFacturaDetalles(filtro);
+		ArrayList<Vector<Object>> tabla = new DetallesBDD().recuperaTablaFacturaDetalles(filtro);
 		DefaultTableModel dtm = (DefaultTableModel) getModel();
 		dtm.setRowCount(0);
 		for (Vector<Object> fila : tabla) {

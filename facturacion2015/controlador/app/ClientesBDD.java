@@ -1,64 +1,48 @@
 package app;
 
-
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Vector;
 
-public class ClientesBDD {
-	// TABLA CLIENTES BASE DE DATOS
-//	id int(10) UNSIGNED
-//	nombre varchar(30)
-//	apellidos varchar(30)
-//	nif varchar(9)
-//	dirCorreo mediumtext
-//	dirFactura mediumtext
-//	dirEnvio mediumtext
-//	contacto mediumtext
-//	porcRecargoEquivalencia double
-//	porcDescuento double
-//	fechaAlta date
-//	baja tinyint(1)
+import javax.sql.rowset.CachedRowSet;
+
+public class ClientesBDD extends BDD {
+/*  TABLA CLIENTES BASE DE DATOS
+	id int(10) UNSIGNED
+	nombre varchar(30)
+	apellidos varchar(30)
+	nif varchar(9)
+	dirCorreo mediumtext
+	dirFactura mediumtext
+	dirEnvio mediumtext
+	contacto mediumtext
+	porcRecargoEquivalencia double
+	porcDescuento double
+	fechaAlta date
+	baja tinyint(1)*/
 	
-	//METODO PUBLICO
-	
+	/*
+	 * 	METODOS PUBLICOS
+	 */
 	public ArrayList<Cliente> recuperaPorFiltro(String filtro) {
 		String sql = "SELECT * FROM clientes WHERE ";
-		sql += filtro==null || filtro.length()==0?"1":filtro;
+		sql += filtro == null || filtro.length() == 0 ? "1" : filtro;
 		sql += " ORDER BY clientes.id";
-		System.out.println(sql);
-		ArrayList<Cliente> lista = new ArrayList<>();
-		Connection c = new Conexion().getConection();
-		if (c != null) {
-			try {
-				// Crea un ESTAMENTO (comando de ejecucion de un sql)
-				Statement comando = c.createStatement();
-				ResultSet rs = comando.executeQuery(sql);
-				while (rs.next() == true) {
-					int id = rs.getInt("id");
-					String nombre = rs.getString("nombre");
-					String apellidos= rs.getString("apellidos");
-					String nif = rs.getString("nif");
-					String dirCorreo = rs.getString("dirCorreo");
-					String dirFactura = rs.getString("dirFactura");
-					String dirEnvio = rs.getString("dirEnvio");
-					String contacto = rs.getString("contacto");
-					double porcRecargoEquivalencia = rs.getDouble("porcRecargoEquivalencia");
-					double porcDescuento = rs.getDouble("porcDescuento");
-					Date fechaAlta = rs.getDate("fechaAlta");
-					boolean baja = rs.getBoolean("baja");
-					lista.add(new Cliente(id, nombre, apellidos, nif, dirCorreo, dirFactura, dirEnvio, contacto, porcRecargoEquivalencia, porcDescuento, fechaAlta, baja));
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+		ArrayList<Cliente> lista = null;
+		CachedRowSet rs = consultaSQL(sql);
 		try {
-			c.close();
+			lista = new ArrayList<>();
+			while (rs.next() == true) {
+				lista.add(new Cliente(rs.getInt("id"), rs.getString("nombre"),
+						rs.getString("apellidos"), rs.getString("nif"), rs
+								.getString("dirCorreo"), rs
+								.getString("dirFactura"), rs
+								.getString("dirEnvio"), rs
+								.getString("contacto"), rs
+								.getDouble("porcRecargoEquivalencia"), rs
+								.getDouble("porcDescuento"), rs
+								.getDate("fechaAlta"), rs.getBoolean("baja")));
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -88,8 +72,7 @@ public class ClientesBDD {
 	}
 	
 	public int grabar(Cliente cli) {
-		int respuesta = -1;
-		String sql = "";
+		String sql = null;
 		if (cli.getId()==0) {
 			sql = "INSERT INTO clientes SET " +
 					"clientes.nombre = '" + cli.getNombre() + "', " +
@@ -120,70 +103,23 @@ public class ClientesBDD {
 					"WHERE clientes.id = " + cli.getId()
 					;
 		}
-		System.out.println(sql);
-		// CREO UNA CONEXION
-		Connection c = new Conexion().getConection();
-		// SI LA CONEXION ES VALIDA
-		if (c!=null) {
-			// INTENTA REALIZAR EL SQL
-			try {
-				// Crea un ESTAMENTO (comando de ejecucion de un sql)
-				Statement comando = c.createStatement();
-				comando.execute(sql,Statement.RETURN_GENERATED_KEYS);
-				// COMPRUEBA si estamos en un Insert o en un Update
-				if (cli.getId() != 0){
-					// ES UN UPDATE
-					respuesta = comando.getUpdateCount()>0?0:-1;
-				} else {
-					// VAMOS A DEVOLVER EL ID GENERADO, pero el EXECUTE devuelve un RESULTSET
-					ResultSet resultados = comando.getGeneratedKeys();
-					// Si el conjunto de resultados no es nulo, y coge el proximo elemento (el primero)
-					if (resultados!=null && resultados.next()) {
-						respuesta = resultados.getInt(1);
-					}
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		//CERRAMOS LA CONEXION
-		try {
-			c.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return respuesta;
+		return ejecutaSQL(sql);
 	}
 	
-	public boolean eliminar (int id) {
-		boolean respuesta = false;
-		String 	sql = "DELETE FROM clientes " +
-				"WHERE clientes.id = " + id;
-		System.out.println(sql);
-		// CREO UNA CONEXION
-		Connection c = new Conexion().getConection();
-		if (c!=null) {
-			try {
-				// Crea un ESTAMENTO (comando de ejecucion de un sql)
-				Statement comando = c.createStatement();
-				if (comando.execute(sql)==false){
-					respuesta = comando.getUpdateCount()>0?true:false ;
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		try {
-			c.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return respuesta;
+	public boolean eliminar(int id) {
+		return ejecutaSQL("DELETE FROM clientes WHERE clientes.id = " + id)>0?true:false;
 	}
 	
-	//RECUPERAR TABLAS ESPECIALES
-	public ArrayList<Vector<Object>> recuperaTablaClientes(String filtro) {
+	/*
+	 * RECUPERAR TABLAS ESPECIALES
+	 * */
+	public ArrayList<Vector<Object>> recuperaTablaClientes(String txtFiltro) {
 		ArrayList<Vector<Object>> tableData = null;
+		ArrayList<String> filtros = new ArrayList<>();
+		filtros.add("clientes.nombre LIKE '%" + txtFiltro + "%'");
+		filtros.add("clientes.apellidos LIKE '%" + txtFiltro + "%'");
+		filtros.add("clientes.nif LIKE '%" + txtFiltro + "%'");
+		String filtro = Utilidades.creaFiltroOR(filtros);
 		ArrayList<Cliente> lista = recuperaPorFiltro(filtro);
 		tableData = new ArrayList<>();
 		for (Cliente cliente : lista) {
@@ -196,5 +132,4 @@ public class ClientesBDD {
 		}
 		return tableData;
 	}
-	
 }

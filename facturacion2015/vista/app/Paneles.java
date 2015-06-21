@@ -40,7 +40,7 @@ public class Paneles extends JPanel {
 		
 		switch (nombrePanel) {
 		case "Usuarios":
-			tabla = new UsuariosTabla(user, textFiltro.getText());
+			tabla = new UsuariosTabla(textFiltro.getText());
 			break;
 		case "Productos":
 			tabla = new ProductosTabla(textFiltro.getText());
@@ -69,7 +69,7 @@ public class Paneles extends JPanel {
 				switch (nombrePanel) {
 				case "Usuarios":
 				{
-					UsuarioDialogo dialogo = new UsuarioDialogo(user, 0);
+					UsuarioDialogo dialogo = new UsuarioDialogo(null);
 					Usuario u = dialogo.mostrar();
 					if (u!=null) {
 						((UsuariosTabla) tabla).actualizarTabla(textFiltro.getText());
@@ -112,6 +112,9 @@ public class Paneles extends JPanel {
 		btnFiltrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				switch (nombrePanel) {
+				case "Usuarios":
+					((UsuariosTabla) tabla).actualizarTabla(textFiltro.getText());
+					break;
 				case "Productos":
 					((ProductosTabla) tabla).actualizarTabla(textFiltro.getText());
 					break;

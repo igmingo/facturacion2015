@@ -16,22 +16,20 @@ public class UsuariosTabla extends JTable {
 	 */
 	private static final long serialVersionUID = -599114548334641747L;
 	private String filtro;
-	private Usuario usuario;
 
 	// METODOS CONSTRUCTORES
-	public UsuariosTabla(Usuario user, String filtro) {
-		this.usuario = user;
+	public UsuariosTabla(String filtro) {
 		this.filtro = filtro;
 		setModel(new DefaultTableModel(
 			new Object[][] {
 				{null, null, null},
 			},
 			new String[] {
-				"Email", "Usuario", "ID"
+				"Usuario", "Nombre", "Estado"
 			}
 		) {
 			Class[] columnTypes = new Class[] {
-				String.class, String.class, Integer.class
+				Usuario.class, String.class, Integer.class
 			};
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
@@ -48,22 +46,21 @@ public class UsuariosTabla extends JTable {
 
 		getColumnModel().getColumn(0).setPreferredWidth(200);
 		setAutoCreateRowSorter(true);
-		
+
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				int row = getSelectedRow();
-				if (row!=-1) {
-					int intId = (int) getValueAt(row, 2);
-						UsuarioDialogo dialog = new UsuarioDialogo (usuario, intId);
-						Usuario u = dialog.mostrar();
-						if (u!=null) {
-							actualizarTabla(filtro);
-						}
+				if (row != -1) {
+					Usuario usu = (Usuario) getValueAt(row, 0);
+					UsuarioDialogo dialog = new UsuarioDialogo(usu);
+					Usuario c = dialog.mostrar();
+					if (c != null) {
+						actualizarTabla(filtro);
+					}
 				}
 			}
 		});
-		
 	}
 
 	public void actualizarTabla(String filtro) {
@@ -76,7 +73,6 @@ public class UsuariosTabla extends JTable {
 		}
 	}
 
-	// METODOS SET Y GET
 	public String getFiltro() {
 		return filtro;
 	}

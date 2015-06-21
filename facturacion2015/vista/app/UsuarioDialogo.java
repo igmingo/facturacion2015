@@ -15,21 +15,21 @@ import javax.swing.SwingConstants;
 import javax.swing.JPasswordField;
 
 public class UsuarioDialogo extends JDialog {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	
+	private Usuario usuario;
+	
 	private JTextField txtId;
 	private JTextField txtUsername;
 	private JTextField txtEmail;
 	private JPasswordField txtPassword;
 	private JCheckBox chkIsAdmin;
 	private EstadosCombo cbStatus;
-	private Usuario usuario;
+
+	//private Usuario userLogin;
 	
-	public UsuarioDialogo(Usuario user, int id) {
+	public UsuarioDialogo(Usuario user) {
 		this.usuario = user;
-		setTitle(usuario.getName());
 		setResizable(false);
 		setModal(true);
 		setBounds(new Rectangle(0, 0, 380, 250));
@@ -62,14 +62,13 @@ public class UsuarioDialogo extends JDialog {
 		pnBotones.setOpaque(false);
 		pnBotones.setLayout(null);
 		
-		JButton btnRemove = new JButton("Eliminar");
-		btnRemove.setBounds(138, 17, 98, 26);
-		pnBotones.add(btnRemove);
-		btnRemove.setVisible(id==0?false:true);
+		JButton btnEliminar = new JButton("Eliminar");
+		btnEliminar.setBounds(138, 17, 98, 26);
+		pnBotones.add(btnEliminar);
 		
-		JButton btnSave = new JButton("Grabar");
-		btnSave.setBounds(20, 17, 98, 26);
-		pnBotones.add(btnSave);
+		JButton btnGrabar = new JButton("Grabar");
+		btnGrabar.setBounds(20, 17, 98, 26);
+		pnBotones.add(btnGrabar);
 		
 		JButton btnCancelar = new JButton("CANCELAR");
 		btnCancelar.setBounds(256, 17, 98, 26);
@@ -109,69 +108,87 @@ public class UsuarioDialogo extends JDialog {
 		lblNewLabel.setBounds(10, 132, 46, 14);
 		getContentPane().add(lblNewLabel);
 		
-		btnSave.addActionListener(new ActionListener() {
+		btnGrabar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				setForm(salvar(getForm()));
-				setVisible(false);
+				guardar();
+				if (usuario!=null) {
+					setVisible(false);
+				}
 			}
 		});
-		btnRemove.addActionListener(new ActionListener() {
+		btnEliminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				eliminar(getForm().getId());
-				setForm(null);
+				eliminar();
 				setVisible(false);
 			}
 		});
 		btnCancelar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				setForm(null);
+				usuario = null;
 				setVisible(false);
 			}
 		});
 		
-		setForm(new UsuariosBDD().RecuperaPorId(id));
+		if (this.usuario!=null && this.usuario.getId()>0) {
+			this.usuario = new UsuariosBDD().recuperaPorId(this.usuario.getId());
+		} else {
+			this.usuario = null;
+		}
+		setForm();
 	}
 
-	private void eliminar(int id) {
-		int pregunta = JOptionPane.showConfirmDialog(null, "¿Desea eliminar el Usuario?", "Eliminar Usuario", JOptionPane.OK_CANCEL_OPTION);
-		if (pregunta==JOptionPane.OK_OPTION) {
-			boolean eliminado = new UsuariosBDD().eliminar(id);
-			mostrarMensaje(eliminado?"Usuario Eliminado.":"No se ha podido eliminar.");
-		}
-	}
-	
-	private Usuario salvar(Usuario u) {
-		if (u!=null) {
-			UsuariosBDD db = new UsuariosBDD();
-			int newId = db.grabar(u);
-			if (newId>=0) {
-				u.setId(newId);
-				ponerPassword(u, new String(txtPassword.getPassword()) );
-				mostrarMensaje("Usuario añadido correctamento.");
-			} else {
-				mostrarMensaje("Error al Añadir.");
+	private void eliminar() {
+		Integer id = Utilidades.validarEntero(txtId.getText());
+		if (id!=null && id>0) {
+			int pregunta = JOptionPane.showConfirmDialog(null, "¿Desea eliminar el cliente?\n", "Eliminar Cliente", JOptionPane.OK_CANCEL_OPTION);
+			if (pregunta==JOptionPane.OK_OPTION) {
+				boolean eliminado = new ClientesBDD().eliminar(id);
+				if (eliminado) {
+					usuario = null;
+					mostrarMensaje("Cliente Eliminado.");
+				} else {
+					mostrarMensaje("No se ha podido eliminar.");
+				}
 			}
 		}
-		return u;
 	}
 	
-	private boolean ponerPassword(Usuario u, String password) {
+	private void guardar() {
+		usuario = getForm();
+		if (usuario != null && usuario.getEmail()!= null
+				&& usuario.getName()!= null) {
+			int newId = new UsuariosBDD().grabar(usuario);
+			if (newId >= 0) {
+				usuario.setId(newId);
+				ponerPassword(new String(txtPassword.getPassword()));
+				setForm();
+				mostrarMensaje("Usuario guardado correctamente.");
+			} else {
+				mostrarMensaje("Error al guardar.");
+			}
+		} else {
+			mostrarMensaje("El formulario no es correcto.");
+			usuario = null;
+		}
+	}
+	
+	private boolean ponerPassword(String password) {
 		boolean resultado = false;
-		if (password!=null && u!=null && u.isLoged()) {
+		if (password!=null && usuario!=null && usuario.isLoged()) {
 			UsuariosBDD db = new UsuariosBDD();
-			resultado = db.ponerPassword(u.getId(), password);
+			resultado = db.ponerPassword(usuario.getId(), password);
 		}
 		return resultado;
 	}
 	
-	private void setForm(Usuario g) {
-		if (g!=null) {
-			txtId.setText("" + g.getId());
-			txtUsername.setText(g.getName());
-			txtEmail.setText(g.getEmail());
+	private void setForm() {
+		if (usuario!=null) {
+			txtId.setText("" + usuario.getId());
+			txtUsername.setText(usuario.getName());
+			txtEmail.setText(usuario.getEmail());
 			txtPassword.setText("");
-			chkIsAdmin.setSelected(g.isAdmin());
-			cbStatus.setEstado(g.getStatus());
+			chkIsAdmin.setSelected(usuario.isAdmin());
+			cbStatus.setEstado(usuario.getStatus());
 		} else {
 			txtId.setText("0");
 			txtUsername.setText("");
@@ -183,17 +200,18 @@ public class UsuarioDialogo extends JDialog {
 	}
 	
 	private Usuario getForm() {
-		Usuario g = null;
-		Integer id = Utilidades.validarEntero(txtId.getText());
-		if (id!=null) {
-			String username = Utilidades.validarString(txtUsername.getText());
-			String email = Utilidades.validarString(txtEmail.getText());
-			//String password = Utilidades.validarString(txtPassword.getText());
-			int status = cbStatus.getEstado();
-			boolean isAdmin = chkIsAdmin.isSelected();
-			g = new Usuario(id, username, email, isAdmin, status );
+		Usuario usu = null;
+		int id = Utilidades.validarEntero(txtId.getText());
+		String username = Utilidades.validarString(txtUsername.getText());
+		String email = Utilidades.validarString(txtEmail.getText());
+		//String password = Utilidades.validarString(txtPassword.getText());
+		int status = cbStatus.getEstado();
+		boolean isAdmin = chkIsAdmin.isSelected();
+		try {
+			usu = new Usuario(id, username, email, isAdmin, status);
+		} catch (Exception e) {
 		}
-		return g;
+		return usu;
 	}
 	
 	private void mostrarMensaje(String string) {
@@ -203,9 +221,7 @@ public class UsuarioDialogo extends JDialog {
 	// METODOS PUBLICOS
 	public Usuario mostrar() {
 		setVisible(true);
-		Usuario retorno = getForm();
-		System.out.println("Retorno del dialogo: " + retorno);
 		dispose();
-		return retorno;
+		return usuario;
 	}
 }

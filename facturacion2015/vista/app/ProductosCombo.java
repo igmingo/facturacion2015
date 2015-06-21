@@ -70,7 +70,7 @@ public class ProductosCombo extends JComboBox<Producto> {
 		removeAllItems();
 		ArrayList<String> filtros = new ArrayList<>();
 		filtros.add("productos.nombre LIKE '%" + cbFiltro + "%'");
-		String filtroString = Utilidades.creaFiltro(filtros);
+		String filtroString = Utilidades.creaFiltroOR(filtros);
 		ArrayList<Producto> lista = new ProductosBDD().recuperaPorFiltro(filtroString);
 		if (lista!=null) {
 			for (Producto p : lista) {

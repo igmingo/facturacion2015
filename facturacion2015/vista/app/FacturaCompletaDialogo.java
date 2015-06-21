@@ -62,7 +62,7 @@ public class FacturaCompletaDialogo extends JDialog {
 	private JSpinner numPorcDescuento;
 	private JSpinner numPorcRecargoequivalencia;
 	
-	private FacturaDetallesPanel pnProductos;
+	private DetallesPanel pnProductos;
 	
 	private JSpinner numImpBase;
 	private JSpinner numImprecargo;
@@ -355,7 +355,7 @@ public class FacturaCompletaDialogo extends JDialog {
 				} catch (Exception e1) {
 				}
 			}
-			pnProductos = new FacturaDetallesPanel(factura.getId());
+			pnProductos = new DetallesPanel(factura.getId());
 			panel.add(pnProductos, "4, 5, fill, fill");
 			setForm();
 			calcular();
@@ -364,7 +364,7 @@ public class FacturaCompletaDialogo extends JDialog {
 			setTitle("Nueva Factura");
 			factura = new Factura();
 			factura.setId(0);
-			pnProductos = new FacturaDetallesPanel(factura.getId());
+			pnProductos = new DetallesPanel(factura.getId());
 			panel.add(pnProductos, "4, 5, fill, fill");
 			setForm();
 		}
@@ -482,7 +482,7 @@ public class FacturaCompletaDialogo extends JDialog {
 		String dirFactura = txtDirFactura.getText().trim();
 		String dirEnvio = txtDirEnvio.getText().trim();
 		Boolean cobrada = chkbxCobrada.isSelected();
-		ArrayList<FacturaDetalle> detalles = pnProductos.recuperarListaDetalles();
+		ArrayList<Detalle> detalles = pnProductos.recuperarListaDetalles();
 		//ArrayList<FacturaDetalle> detalles = tbFacturaDetalles.getListaDetalles();
 		try {
 			fac = new Factura(id, cliente, nombreCliente, numero, fecha, porcDescuento, porcRecargoEquivalencia, impTotal, impRecargo, impIva, dirCorreo, dirFactura, dirEnvio, cobrada, detalles);

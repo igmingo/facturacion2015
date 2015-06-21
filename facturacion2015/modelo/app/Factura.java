@@ -38,7 +38,7 @@ public class Factura {
      private String dirFactura;
      private String dirEnvio;
      private boolean cobrada;
-     private ArrayList<FacturaDetalle> detalles;
+     private ArrayList<Detalle> detalles;
 
     public Factura() {
     }
@@ -47,7 +47,7 @@ public class Factura {
 			Date fecha, double porcDescuento, double porcRecargoEquivalencia,
 			double impTotal, double impRecargo, double impIva,
 			String dirCorreo, String dirFactura, String dirEnvio,
-			boolean cobrada, ArrayList<FacturaDetalle> detalles) {
+			boolean cobrada, ArrayList<Detalle> detalles) {
 		this.id = id;
 		this.cliente = cliente;
 		if (cliente!=null) {
@@ -201,11 +201,11 @@ public class Factura {
         this.cobrada = cobrada;
     }
     
-	public ArrayList<FacturaDetalle> getDetalles() {
+	public ArrayList<Detalle> getDetalles() {
 		return detalles;
 	}
 
-	public void setDetalles(ArrayList<FacturaDetalle> detalles) {
+	public void setDetalles(ArrayList<Detalle> detalles) {
 		this.detalles = detalles;
 	}
 	

@@ -1,6 +1,6 @@
 package app;
 
-public class FacturaDetalle {
+public class Detalle {
 
 	// TABLA facturasdetalle BASE DE DATOS
 //	id int(10) UNSIGNED No auto_increment
@@ -11,18 +11,18 @@ public class FacturaDetalle {
 //	prodIva double No
 //	cantidad int(11) No
 
-     private int id;
-     private int facturaId;
-     private int prodId;
-     private String prodNombre;
-     private double prodPrecio;
-     private double prodIva;
-     private int cantidad;
+	protected int id;
+	protected int facturaId;
+	protected int prodId;
+    protected String prodNombre;
+    protected double prodPrecio;
+    protected double prodIva;
+	protected int cantidad;
 
-    public FacturaDetalle() {
+    public Detalle() {
     }
 
-    public FacturaDetalle(int id, int facturaId, int prodId, String prodNombre, double prodPrecio, double prodIva, int cantidad) {
+    public Detalle(int id, int facturaId, int prodId, String prodNombre, double prodPrecio, double prodIva, int cantidad) {
        this.id = id;
        this.facturaId = facturaId;
        this.prodId = prodId;
@@ -96,6 +96,14 @@ public class FacturaDetalle {
 			}
 		}
 		return nota + prodNombre;
+	}
+
+	public PRUEBA_FacturaDetalleParaTabla paraTabla(int operacion) {
+		return new PRUEBA_FacturaDetalleParaTabla(this, operacion);
+	}
+
+	public PRUEBA_FacturaDetalleParaTabla paraTabla() {
+		return new PRUEBA_FacturaDetalleParaTabla(this);
 	}
 }
 

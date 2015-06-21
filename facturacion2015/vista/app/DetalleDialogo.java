@@ -33,13 +33,13 @@ import java.awt.BorderLayout;
 //prodIva double No
 //cantidad int(11) No
 
-public class FacturaDetalleDialogo extends JDialog {
+public class DetalleDialogo extends JDialog {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private FacturaDetalle fd;
+	private Detalle fd;
 	
 	private JTextField txtId;
 	private JTextField txtFacturaId;
@@ -49,7 +49,7 @@ public class FacturaDetalleDialogo extends JDialog {
 	private JSpinner numProdIva;
 	private JSpinner numCantidad;
 
-	public FacturaDetalleDialogo(FacturaDetalle facDet) {
+	public DetalleDialogo(Detalle facDet) {
 		this.fd = facDet;
 		
 		setResizable(false);
@@ -237,8 +237,8 @@ public class FacturaDetalleDialogo extends JDialog {
 	 * Recoge el formulario y crea una instancia de Cliente
 	 * @return Retorna una instacia de Cliente. Null si el formulario esta incorrecto.
 	 */
-	private FacturaDetalle getForm() {
-		FacturaDetalle facDet = null;
+	private Detalle getForm() {
+		Detalle facDet = null;
 		// TABLA facturasdetalle BASE DE DATOS
 		// id int(10) UNSIGNED No auto_increment
 		// facturaId int(10) UNSIGNED No facturas -> id
@@ -256,7 +256,7 @@ public class FacturaDetalleDialogo extends JDialog {
 		Double prodIva = Utilidades.validarDouble("" + numProdIva.getValue());
 		Integer cantidad = Utilidades.validarEntero("" + numCantidad.getValue());
 		try {
-			facDet = new FacturaDetalle(id, facturaId, prodId, prodNombre, prodPrecio, prodIva, cantidad);
+			facDet = new Detalle(id, facturaId, prodId, prodNombre, prodPrecio, prodIva, cantidad);
 		} catch (Exception e) {
 			mostrarMensaje("Error de formulario");
 		}
@@ -271,7 +271,7 @@ public class FacturaDetalleDialogo extends JDialog {
 	 * Hace visible el diálogo Modal para editar un Detalle de Producto. Si se hace invisible el Dialogo, se cierra y elimina de la memoria.
 	 * @return Retorna la instacia del Detalle de Producto que se ha guardado
 	 */
-	public FacturaDetalle mostrar() {
+	public Detalle mostrar() {
 		setVisible(true);
 		dispose();
 		return fd;

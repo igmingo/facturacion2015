@@ -1,25 +1,25 @@
 package app;
 
-
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Vector;
 
-public class ProductosBDD extends FacturacionBDD {
-	// TABLA productos BASE DE DATOS
-//	id int(11)
-//	nombre varchar(30)
-//	precio double
-//	iva double
-//	stock int(11)
-//	descripcion mediumtext
-//	baja tinyint(1)
+import javax.sql.rowset.CachedRowSet;
+
+public class ProductosBDD extends BDD {
+/*	TABLA productos BASE DE DATOS
+	id int(11)
+	nombre varchar(30)
+	precio double
+	iva double
+	stock int(11)
+	descripcion mediumtext
+	baja tinyint(1)*/
 	
-	//METODO PUBLICO
-	
+	/*
+	 * 	METODOS PUBLICOS
+	 */
 	/** Resta el Stock la cantidad indicada
 	 * @param cnx es la Conexion activa
 	 * @param prodId es el ID del Producto que vamos a bajar el stock
@@ -35,32 +35,18 @@ public class ProductosBDD extends FacturacionBDD {
 	
 	public ArrayList<Producto> recuperaPorFiltro(String filtro) {
 		String sql = "SELECT * FROM productos WHERE ";
-		sql += filtro==null || filtro.length()==0?"1":filtro;
+		sql += filtro == null || filtro.length() == 0 ? "1" : filtro;
 		sql += " ORDER BY productos.id";
-		System.out.println(sql);
-		ArrayList<Producto> lista = new ArrayList<>();
-		Connection c = new Conexion().getConection();
-		if (c != null) {
-			try {
-				// Crea un ESTAMENTO (comando de ejecucion de un sql)
-				Statement comando = c.createStatement();
-				ResultSet rs = comando.executeQuery(sql);
-				while (rs.next() == true) {
-					int id = rs.getInt("id");
-					String nombre = rs.getString("nombre");
-					double precio = rs.getDouble("precio");
-					double iva = rs.getDouble("iva");
-					int stock = rs.getInt("stock");
-					String descripcion = rs.getString("descripcion");
-					boolean baja = rs.getBoolean("baja");
-					lista.add(new Producto(id, nombre, precio, iva, stock, descripcion, baja));
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
+		ArrayList<Producto> lista = null;
+		CachedRowSet rs = consultaSQL(sql);
 		try {
-			c.close();
+			lista = new ArrayList<>();
+			while (rs.next() == true) {
+				lista.add(new Producto(rs.getInt("id"), rs.getString("nombre"),
+						rs.getDouble("precio"), rs.getDouble("iva"), rs
+								.getInt("stock"), rs.getString("descripcion"),
+						rs.getBoolean("baja")));
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -69,7 +55,6 @@ public class ProductosBDD extends FacturacionBDD {
 	
 	public ArrayList<Producto> recuperaPorNombre(String criterio) {
 		String filtro = "productos.nombre LIKE '%" + criterio + "%' ";
-		//filtro += "OR productos.descripcion LIKE '%" + criterio + "%'";
 		return recuperaPorFiltro(filtro);
 	}
 	
@@ -90,19 +75,8 @@ public class ProductosBDD extends FacturacionBDD {
 	}
 	
 	public int grabar(Producto prod) {
-		int respuesta = -1;
-		String sql = "";
+		String sql = null;
 		if (prod.getId()==0) {
-			
-			// TABLA productos BASE DE DATOS
-//			id int(11)
-//			nombre varchar(30)
-//			precio double
-//			iva double
-//			stock int(11)
-//			descripcion mediumtext
-//			baja tinyint(1)
-			
 			sql = "INSERT INTO productos SET " +
 					"productos.nombre = '" + prod.getNombre() + "', " +
 					"productos.precio = " + prod.getPrecio() + ", " +
@@ -122,72 +96,23 @@ public class ProductosBDD extends FacturacionBDD {
 					"WHERE productos.id = " + prod.getId()
 					;
 		}
-		System.out.println(sql);
-		// CREO UNA CONEXION
-		Connection c = new Conexion().getConection();
-		// SI LA CONEXION ES VALIDA
-		if (c!=null) {
-			// INTENTA REALIZAR EL SQL
-			try {
-				// Crea un ESTAMENTO (comando de ejecucion de un sql)
-				Statement comando = c.createStatement();
-				comando.execute(sql,Statement.RETURN_GENERATED_KEYS);
-				// COMPRUEBA si estamos en un Insert o en un Update
-				if (prod.getId() != 0){
-					// ES UN UPDATE
-					respuesta = comando.getUpdateCount()>0?0:-1;
-				} else {
-					// VAMOS A DEVOLVER EL ID GENERADO, pero el EXECUTE devuelve un RESULTSET
-					ResultSet resultados = comando.getGeneratedKeys();
-					// Si el conjunto de resultados no es nulo, y coge el proximo elemento (el primero)
-					if (resultados!=null && resultados.next()) {
-						respuesta = resultados.getInt(1);
-					}
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		//CERRAMOS LA CONEXION
-		try {
-			c.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return respuesta;
+		return ejecutaSQL(sql);
 	}
 	
-	public boolean eliminar (int id) {
-		boolean respuesta = false;
-		String 	sql = "DELETE FROM productos " +
-				"WHERE productos.id = " + id;
-		System.out.println(sql);
-		// CREO UNA CONEXION
-		Connection c = new Conexion().getConection();
-		if (c!=null) {
-			try {
-				// Crea un ESTAMENTO (comando de ejecucion de un sql)
-				Statement comando = c.createStatement();
-				if (comando.execute(sql)==false){
-					respuesta = comando.getUpdateCount()>0?true:false ;
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		try {
-			c.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return respuesta;
+	public boolean eliminar(int id) {
+		return ejecutaSQL("DELETE FROM productos WHERE productos.id = " + id)>0?true:false;
 	}
 	
-	//RECUPERAR TABLAS ESPECIALES
-	
-	public ArrayList<Vector<Object>> recuperaTablaProductos(String filtro) {
+	/*
+	 * RECUPERAR TABLAS ESPECIALES
+	 */
+	public ArrayList<Vector<Object>> recuperaTablaProductos(String txtFiltro) {
 		//"Producto", "Precio", "Stock"
 		ArrayList<Vector<Object>> tableData = null;
+		ArrayList<String> filtros = new ArrayList<>();
+		filtros.add("productos.nombre LIKE '%" + txtFiltro + "%'");
+		filtros.add("productos.descripcion LIKE '%" + txtFiltro + "%'");
+		String filtro = Utilidades.creaFiltroOR(filtros);
 		ArrayList<Producto> lista = recuperaPorFiltro(filtro);
 		tableData = new ArrayList<>();
 		for (Producto pro : lista) {
@@ -199,38 +124,5 @@ public class ProductosBDD extends FacturacionBDD {
 		}
 		return tableData;
 	}
-	
-//	//RECUPERAR TABLAS ESPECIALES
-//	public ArrayList<Vector<Object>> recuperaTablaProductos2(String filtro) {
-//			// Devuelve una tabla, o Vector de Vectores de objetos
-//			// `id`, `nombre`, `apellidos`, `nif`
-//			ArrayList<Vector<Object>> tableData = null;
-//			filtro = "WHERE productos.nombre LIKE '%" + filtro + "%'";
-//			String sql = "SELECT productos.id, productos.nombre FROM productos " + filtro + " ORDER BY productos.nombre";
-//			System.out.println(sql);
-//			tableData = new ArrayList<>();
-//			Connection c = new Conexion().getConection();
-//			if (c!=null) {
-//				try {
-//					Statement comando = c.createStatement();
-//					ResultSet rs = comando.executeQuery(sql);
-//					while (rs.next() == true) {
-//						//Los datos de la fila son un tipo VECTOR
-//						Vector<Object> filaData = new Vector<>();
-//						filaData.add(rs.getInt("id"));
-//						filaData.add(rs.getString("nombre"));
-//						tableData.add(filaData);
-//					}
-//				} catch (SQLException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//			try {
-//				c.close();
-//			} catch (SQLException e) {
-//				e.printStackTrace();
-//			}
-//			return tableData;
-//	}
 	
 }

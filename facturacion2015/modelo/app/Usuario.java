@@ -76,5 +76,10 @@ public class Usuario {
 	public void setLoged(boolean loged) {
 		Loged = loged;
 	}
+
+	@Override
+	public String toString() {
+		return email + " (" + id + ")";
+	}
 	
 }

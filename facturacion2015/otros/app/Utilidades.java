@@ -84,12 +84,20 @@ public class Utilidades {
 		return sdf.format(fecha);
 	}
 	
-	public static String creaFiltro (ArrayList<String> filtros) {
+	public static String creaFiltroAND2 (ArrayList<String> filtros) {
+		return creaFiltro(filtros, "AND");
+	}
+	
+	public static String creaFiltroOR (ArrayList<String> filtros) {
+		return creaFiltro(filtros, "OR");
+	}
+	
+	public static String creaFiltro (ArrayList<String> filtros, String union) {
 		String stringFiltro = "";
 		for (int i = 0; i < filtros.size()-1 ; i++) {
 			String filtro = filtros.get(i);
 			stringFiltro += filtro;
-			stringFiltro += " AND ";
+			stringFiltro += " " + union + " ";
 		}
 		String filtro = filtros.get(filtros.size()-1);
 		stringFiltro += filtro;

@@ -16,7 +16,7 @@ import javax.swing.table.DefaultTableModel;
 //prodIva double No
 //cantidad int(11) No
 
-public class FacturasDetalleTabla extends JTable {
+public class DetalleTabla extends JTable {
 	/**
 	 * 
 	 */
@@ -24,7 +24,7 @@ public class FacturasDetalleTabla extends JTable {
 	private String filtro;
 	private Double totalFactura;
 	
-	public FacturasDetalleTabla(String f) {
+	public DetalleTabla(String f) {
 		this.filtro = f;
 		setModel(new DefaultTableModel(
 			new Object[][] {
@@ -35,7 +35,7 @@ public class FacturasDetalleTabla extends JTable {
 			}
 		) {
 			Class[] columnTypes = new Class[] {
-				FacturaDetalle.class, Double.class, Double.class, Integer.class
+				Detalle.class, Double.class, Double.class, Integer.class
 			};
 			public Class getColumnClass(int columnIndex) {
 				return columnTypes[columnIndex];
@@ -54,9 +54,9 @@ public class FacturasDetalleTabla extends JTable {
 			public void mouseClicked(MouseEvent arg0) {
 				int row = getSelectedRow();
 				if (row!=-1) {
-					FacturaDetalle fd = (FacturaDetalle) getValueAt(row, 0);
-						FacturaDetalleDialogo dialog = new FacturaDetalleDialogo (fd);
-						FacturaDetalle c = dialog.mostrar();
+					Detalle fd = (Detalle) getValueAt(row, 0);
+						DetalleDialogo dialog = new DetalleDialogo (fd);
+						Detalle c = dialog.mostrar();
 						if (c!=null) {
 							repaint();
 						}
@@ -81,7 +81,7 @@ public class FacturasDetalleTabla extends JTable {
 	private void actualizaTotalFactura() {
 		this.totalFactura = 0.0;
 		for (int row = 0; row < getRowCount(); row++) {
-			FacturaDetalle fc = (FacturaDetalle) getValueAt(row, 0);
+			Detalle fc = (Detalle) getValueAt(row, 0);
 			this.totalFactura += (fc.getProdPrecio() + (100+fc.getProdIva())/100.0) * fc.getCantidad();
 		}
 	}
@@ -90,17 +90,17 @@ public class FacturasDetalleTabla extends JTable {
 		this.totalFactura = totalFactura;
 	}
 
-	public void addDetalle(FacturaDetalle fd) {
+	public void addDetalle(Detalle fd) {
 		
 	}
 	
-	public void putDetalles(ArrayList<FacturaDetalle> listaDetalles) {
+	public void putDetalles(ArrayList<Detalle> listaDetalles) {
 		removeAll();
 		//"Detalle", "Precio", "IVA", "Cantidad"
 		if (listaDetalles!=null) {
 			ArrayList<Vector<Object>> tableData = null;
 			tableData = new ArrayList<>();
-			for (FacturaDetalle fd : listaDetalles) {
+			for (Detalle fd : listaDetalles) {
 				Vector<Object> filaData = new Vector<>();
 				filaData.add(fd);
 				filaData.add(fd.getProdPrecio());
@@ -111,10 +111,10 @@ public class FacturasDetalleTabla extends JTable {
 		}
 	}
 
-	public ArrayList<FacturaDetalle> getListaDetalles() {
-		ArrayList<FacturaDetalle> listaDetalles = new ArrayList<>();
+	public ArrayList<Detalle> getListaDetalles() {
+		ArrayList<Detalle> listaDetalles = new ArrayList<>();
 		for (int row = 0; row < getRowCount(); row++) {
-			FacturaDetalle fc = (FacturaDetalle) getValueAt(row, 0);
+			Detalle fc = (Detalle) getValueAt(row, 0);
 			listaDetalles.add(fc);
 		}
 		return listaDetalles;

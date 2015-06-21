@@ -158,12 +158,12 @@ public class Main extends JFrame {
 			}
 		});
 		
-		mntmPruebas.addActionListener(new ActionListener() {
+		mntmAdminstracinDeUsuarios.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				Prueba p = new Prueba ();
-				p.setVisible(true);
+				mostrarPanel("Usuarios");
 			}
 		});
+		
 		getContentPane().addHierarchyBoundsListener(new HierarchyBoundsAdapter() {
 			@Override
 			public void ancestorResized(HierarchyEvent e) {
@@ -230,10 +230,8 @@ public class Main extends JFrame {
 //			e.printStackTrace();
 //		}
 		
-		ArrayList<Factura> lista = new FacturasBDD().recuperaFacturaPorFiltro_NEW(null);
-		
-		//Main main = new Main();
-		//main.mostrar();
+		Main main = new Main();
+		main.mostrar();
 	}
 	
 	private void mostrar() {

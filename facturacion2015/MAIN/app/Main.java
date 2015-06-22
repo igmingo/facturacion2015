@@ -18,6 +18,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -27,6 +29,13 @@ import java.awt.event.HierarchyBoundsAdapter;
 import java.awt.event.HierarchyEvent;
 
 import javax.swing.JDesktopPane;
+
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.view.JasperViewer;
 
 import java.awt.Color;
 
@@ -106,8 +115,30 @@ public class Main extends JFrame {
 		
 		JMenu mnConsultas = new JMenu("Consultas");
 		menuBar.add(mnConsultas);
-		JMenuItem mntmPruebas = new JMenuItem("Pruebas");
-		mnConsultas.add(mntmPruebas);
+		
+		JMenuItem mntmInformeDeProductos = new JMenuItem("Informe de Productos");
+		mntmInformeDeProductos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				abrirInforme("Productos");
+			}
+		});
+		mnConsultas.add(mntmInformeDeProductos);
+		
+		JMenuItem mntmInformeDeClientes = new JMenuItem("Informe de Clientes");
+		mntmInformeDeClientes.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				abrirInforme("Clientes");
+			}
+		});
+		mnConsultas.add(mntmInformeDeClientes);
+		
+		JMenuItem mntmInformeDeFacturas = new JMenuItem("Informe de Facturas");
+		mntmInformeDeFacturas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				abrirInforme("Facturas");
+			}
+		});
+		mnConsultas.add(mntmInformeDeFacturas);
 		
 		JMenu mnUsuarios = new JMenu("Usuarios");
 		menuBar.add(mnUsuarios);
@@ -196,6 +227,44 @@ public class Main extends JFrame {
 			}
 		});
 		
+	}
+
+	protected void abrirInforme(String string) {
+		String nameReport = "";
+		switch (string) {
+		case "Productos":
+			nameReport = "rpt_productos.jasper";
+			break;
+		case "Clientes":
+			nameReport = "rpt_clientes.jasper";
+			break;
+		case "Facturas":
+			nameReport = "rpt_facturas.jasper";
+			break;
+		default:
+			break;
+		}
+		
+		try {
+			JasperReport report;
+			JasperPrint reportRelleno;
+			JasperViewer reportVisor;
+
+			report = (JasperReport) JRLoader.loadObjectFromFile("./informes/" + nameReport);
+			Connection cnx = new Conexion().getConection();
+			reportRelleno = JasperFillManager.fillReport(report, null, cnx);
+			try {
+				cnx.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			reportVisor = new JasperViewer(reportRelleno, false );
+			//Para que solo abra un viewReport
+			//reportVisor.viewReport(reportRelleno, false);
+			reportVisor.setVisible(true);
+		} catch (JRException e) {
+			e.printStackTrace();
+		}
 	}
 
 	protected void mostrarPanel(String string) {

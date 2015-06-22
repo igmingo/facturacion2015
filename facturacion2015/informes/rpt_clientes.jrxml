@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2015-06-22T13:37:33 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="listado" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="86f2123d-bb79-44a0-a964-ee44789a9e68">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="facturacion.xml"/>
+	<queryString>
+		<![CDATA[SELECT  * FROM clientes ORDER BY  facturacion2015.clientes.apellidos, facturacion2015.clientes.nombre]]>
+	</queryString>
+	<field name="apellidos" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nombre" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="porcDescuento" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="37" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="555" height="37" forecolor="#FFFFFF" backcolor="#3300FF" uuid="8649352d-db85-4eb9-aa07-d58fa4712cdf"/>
+				<box>
+					<bottomPen lineWidth="1.0" lineStyle="Solid"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Calibri" size="23" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Listado de Clientes]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="27" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="20" uuid="d89a6941-e453-4369-b5bf-c2d52a0aa454"/>
+				<box>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#0099FF"/>
+				</box>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[NOMBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="0" width="310" height="20" uuid="c3921a82-14b4-474f-a509-bce0de57efbc"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[APELLIDOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="0" width="100" height="20" uuid="13220e16-065d-4c46-af86-5bdcca30f1c1"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<text><![CDATA[% DESCUENTO]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="130" y="-1" width="310" height="20" uuid="23371892-67ba-4c71-9998-aba04cefcdd2"/>
+				<textFieldExpression><![CDATA[$F{apellidos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="120" height="20" uuid="a4b2cc56-f08a-46d1-97f9-de69d0a5e5cf"/>
+				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.0##&apos; %&apos;">
+				<reportElement x="455" y="0" width="100" height="20" uuid="5726f047-2dd1-4791-9e3b-a45fe96b58ff"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{porcDescuento}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="27" splitType="Stretch">
+			<textField>
+				<reportElement x="227" y="6" width="100" height="21" uuid="ab1f4497-0bc6-4d60-b475-f844f168bead"/>
+				<textElement verticalAlignment="Bottom"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

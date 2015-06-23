@@ -1,26 +1,19 @@
 package app;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
 import java.awt.Dimension;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JPanel;
 import javax.swing.JLabel;
@@ -116,13 +109,21 @@ public class Main extends JFrame {
 		JMenu mnConsultas = new JMenu("Consultas");
 		menuBar.add(mnConsultas);
 		
-		JMenuItem mntmInformeDeProductos = new JMenuItem("Informe de Productos");
-		mntmInformeDeProductos.addActionListener(new ActionListener() {
+		JMenuItem mntmInfProductos = new JMenuItem("Listado de todos los Productos");
+		mntmInfProductos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				abrirInforme("Productos");
 			}
 		});
-		mnConsultas.add(mntmInformeDeProductos);
+		mnConsultas.add(mntmInfProductos);
+		
+		JMenuItem mntmInfProductosPorPrecio = new JMenuItem("Informe de Productos por Precio");
+		mntmInfProductosPorPrecio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				abrirInforme("ProductosDesde");
+			}
+		});
+		mnConsultas.add(mntmInfProductosPorPrecio);
 		
 		JMenuItem mntmInformeDeClientes = new JMenuItem("Informe de Clientes");
 		mntmInformeDeClientes.addActionListener(new ActionListener() {
@@ -132,13 +133,21 @@ public class Main extends JFrame {
 		});
 		mnConsultas.add(mntmInformeDeClientes);
 		
-		JMenuItem mntmInformeDeFacturas = new JMenuItem("Informe de Facturas");
-		mntmInformeDeFacturas.addActionListener(new ActionListener() {
+		JMenuItem mntmInfFacturas = new JMenuItem("Listado de Facturas");
+		mntmInfFacturas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				abrirInforme("Facturas");
 			}
 		});
-		mnConsultas.add(mntmInformeDeFacturas);
+		mnConsultas.add(mntmInfFacturas);
+		
+		JMenuItem mntmInFacturasDeCliente = new JMenuItem("Informe de Facturas de Cliente");
+		mntmInFacturasDeCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				abrirInforme("FacturasDeCliente");
+			}
+		});
+		mnConsultas.add(mntmInFacturasDeCliente);
 		
 		JMenu mnUsuarios = new JMenu("Usuarios");
 		menuBar.add(mnUsuarios);
@@ -231,7 +240,17 @@ public class Main extends JFrame {
 
 	protected void abrirInforme(String string) {
 		String nameReport = "";
+		
+		Map<String, Object> parametros = null;
 		switch (string) {
+		case "FacturasDeCliente":
+			nameReport = "rpt_facturascliente.jasper";	
+			parametros = new DlgInf_FacPorCliente().mostrar();
+			break;
+		case "ProductosDesde":
+			nameReport = "rpt_productosprecio.jasper";
+			//"desdeprecio", "hastaprecio", "orden"
+			break;
 		case "Productos":
 			nameReport = "rpt_productos.jasper";
 			break;
@@ -252,7 +271,8 @@ public class Main extends JFrame {
 
 			report = (JasperReport) JRLoader.loadObjectFromFile("./informes/" + nameReport);
 			Connection cnx = new Conexion().getConection();
-			reportRelleno = JasperFillManager.fillReport(report, null, cnx);
+			System.out.println(parametros);
+			reportRelleno = JasperFillManager.fillReport(report, parametros, cnx);
 			try {
 				cnx.close();
 			} catch (SQLException e) {

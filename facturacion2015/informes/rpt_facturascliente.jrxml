@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2015-06-23T13:23:20 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_facturascliente" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="11e65544-21f3-4db9-90e2-fb8c9418a8f9">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Facturacion Data Adapter "/>
+	<parameter name="clienteid" class="java.lang.Integer">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT  facturacion2015.facturas.id, facturacion2015.facturas.clienteId,  facturacion2015.facturas.numero,  facturacion2015.facturas.fecha,  facturacion2015.facturas.impTotal, facturacion2015.facturas.nombreCliente
+FROM  facturacion2015.facturas 
+WHERE  facturacion2015.facturas.clienteId = $P{clienteid}
+ORDER BY  facturacion2015.facturas.id]]>
+	</queryString>
+	<field name="id" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="clienteId" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="numero" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="fecha" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="impTotal" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nombreCliente" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="50" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="50" uuid="9217d883-fb0d-4c6d-9c54-0e99c487cafa"/>
+				<textElement textAlignment="Center">
+					<font size="30"/>
+				</textElement>
+				<text><![CDATA[Listado de Facturas]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="45" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="555" height="45" uuid="1bae9692-d79d-4aa1-88d2-4befdb782028"/>
+				<textElement textAlignment="Center">
+					<font size="22"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombreCliente}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="20" uuid="a68b0497-87a5-4d29-9fa4-1215dd1d7f2f"/>
+				<text><![CDATA[Nº]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="110" y="0" width="100" height="20" uuid="bce049fa-1290-4285-b08e-2647d41a66cc"/>
+				<text><![CDATA[FECHA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="450" y="0" width="100" height="20" uuid="523cf66c-0981-40be-8b48-fff40403012c"/>
+				<textElement textAlignment="Right"/>
+				<text><![CDATA[IMPORTE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="30" uuid="c9083393-4da7-4b50-af53-9ba93b2d4ae0"/>
+				<textFieldExpression><![CDATA[$F{numero}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="0" width="100" height="30" uuid="43c0ff6b-37c2-4ec2-ad61-b72ed9eb48b4"/>
+				<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.##¤;(#,##0.##) ¤">
+				<reportElement x="410" y="0" width="140" height="30" uuid="80012e2c-acd5-4ca7-ae61-46d6c39a4cbb"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{impTotal}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2015-06-23T13:53:27 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="productos" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ac45c4c4-604b-4506-a21c-09a16b0d2f49">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Facturacion Data Adapter "/>
+	<parameter name="desdeprecio" class="java.lang.Double">
+		<parameterDescription><![CDATA[Para filtrar por precio]]></parameterDescription>
+	</parameter>
+	<parameter name="hastaprecio" class="java.lang.Double">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="orden" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT  facturacion2015.productos.nombre ,  facturacion2015.productos.precio
+FROM  facturacion2015.productos 
+WHERE  facturacion2015.productos.precio > $P{desdeprecio} AND facturacion2015.productos.precio < $P{hastaprecio}]]>
+	</queryString>
+	<field name="nombre" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="precio" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="46" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="46" uuid="090755e2-13c3-4d15-9e1c-dabfb33b858c"/>
+				<textElement textAlignment="Center">
+					<font size="29"/>
+				</textElement>
+				<text><![CDATA[Facturacion 2015]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="20" uuid="5da7034a-6ffd-461b-85b4-f4dfc73dcc4f"/>
+				<text><![CDATA[Listado de Precios desde                                   hasta]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="120" y="0" width="80" height="20" uuid="648b286f-072e-4de5-8012-b8d4efff2d64"/>
+				<textFieldExpression><![CDATA[$P{desdeprecio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="240" y="0" width="100" height="20" uuid="afacf45a-ecc2-4ae0-a74a-f8a0015a6528"/>
+				<textFieldExpression><![CDATA[$P{hastaprecio}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="390" y="0" width="80" height="20" uuid="c15cab7e-7043-40f0-ba8c-ff3218416373"/>
+				<text><![CDATA[Ordenado por]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="475" y="0" width="80" height="20" uuid="539fe1e3-4ac2-4683-9eed-a793e71e7936"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$P{orden}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="455" height="20" uuid="41fcc0ca-3821-4f89-b40d-cd085423102e"/>
+				<text><![CDATA[NOMBRE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="455" y="0" width="100" height="20" uuid="7d6d79b5-0cc1-45f1-bb3c-b65446bec5fd"/>
+				<text><![CDATA[PRECIO]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="455" height="20" uuid="e4272e58-5317-43db-89db-64d3db4c5aea"/>
+				<textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="455" y="0" width="100" height="20" uuid="a51f840c-c653-40de-87ba-1c5eb487bb85"/>
+				<textFieldExpression><![CDATA[$F{precio}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -21,9 +21,9 @@ public class DetallesBDD  extends BDD {
 	 * 	METODOS PUBLICOS
 	 */
 	public ArrayList<Detalle> recuperaPorFiltro(String filtro) {
-		String sql = "SELECT * FROM facturas WHERE ";
+		String sql = "SELECT * FROM facturasdetalle WHERE ";
 		sql += filtro == null || filtro.length() == 0 ? "1" : filtro;
-		sql += " ORDER BY facturas.numero";
+		sql += " ORDER BY facturasdetalle.id";
 		ArrayList<Detalle> lista = null;
 		CachedRowSet rs = consultaSQL(sql);
 		try {

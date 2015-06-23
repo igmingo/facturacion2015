@@ -85,22 +85,22 @@ public class DetallesPanel extends JPanel {
 		
 		JButton btnEliminar = new JButton("-");
 		
-				form.add(btnEliminar, "7, 1, fill, center");
-				
-				JButton btnBorrarTabla = new JButton("Vaciar Tabla");
-				form.add(btnBorrarTabla, "8, 1");
-				
-				btnBorrarTabla.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-						vaciar();
-					}
-				});
-				
-				btnEliminar.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
-						eliminarFilaSeleccionada();
-					}
-				});
+		form.add(btnEliminar, "7, 1, fill, center");
+		
+		JButton btnBorrarTabla = new JButton("Vaciar Tabla");
+		form.add(btnBorrarTabla, "8, 1");
+		
+		btnBorrarTabla.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				vaciar();
+			}
+		});
+		
+		btnEliminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				eliminarFilaSeleccionada();
+			}
+		});
 		
 		JScrollPane pnTable = new JScrollPane();
 		add(pnTable, BorderLayout.CENTER);
@@ -250,12 +250,13 @@ public class DetallesPanel extends JPanel {
 	}
 	
 	private void ponerFacturaDetalle(int row, Detalle fd) {
-		//"Detalle", "Precio", "IVA", "Cantidad"
+		//"Detalle", "Precio", "IVA", "Cantidad", "Operacion"
 		Vector<Object> filaData = new Vector<>();
 		filaData.add(fd);
 		filaData.add(fd.getProdPrecio());
 		filaData.add(fd.getProdIva());
 		filaData.add(fd.getCantidad());
+		filaData.add(fd.id==0?"Nuevo":fd.id>0?"Existente":"Para borrar");
 		DefaultTableModel datos = (DefaultTableModel) prodTabla.getModel();
 		datos.removeRow(row);
 		datos.insertRow(row, filaData);
@@ -268,6 +269,7 @@ public class DetallesPanel extends JPanel {
 		filaData.add(fd.getProdPrecio());
 		filaData.add(fd.getProdIva());
 		filaData.add(fd.getCantidad());
+		filaData.add(fd.id==0?"Nuevo":fd.id>0?"Existente":"Para borrar");
 		DefaultTableModel datos = (DefaultTableModel) prodTabla.getModel();
 		datos.addRow(filaData);
 	}
@@ -324,6 +326,8 @@ public class DetallesPanel extends JPanel {
 				DefaultTableModel dtm = (DefaultTableModel) prodTabla.getModel();
 				dtm.removeRow(row);
 			} else {
+				DefaultTableModel dtm = (DefaultTableModel) prodTabla.getModel();
+				dtm.setValueAt("A borrar", row, 4);
 				fd.setId(id*-1);
 				prodTabla.repaint();
 			}

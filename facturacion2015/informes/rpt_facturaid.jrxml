@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
+<!-- 2015-06-24T11:44:48 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="rpt_facturaid" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="d741768f-a6ec-4b8d-aa77-6257ed2980e2">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Facturacion Data Adapter "/>
+	<style name="Title" forecolor="#000066" hTextAlign="Right" fontName="Arial" fontSize="26" isBold="true"/>
+	<style name="SubTitle" forecolor="#0000FF" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<queryString>
+		<![CDATA[SELECT facturacion2015.facturas.`dirCorreo`,
+	facturacion2015.facturas.`dirFactura`,
+	facturacion2015.facturas.cobrada,
+	facturacion2015.facturas.`nombreCliente`,
+	facturacion2015.clientes.nif,
+	facturacion2015.facturas.`impTotal`,
+	facturacion2015.facturas.`dirEnvio`,
+	facturacion2015.facturas.`porcDescuento`,
+	facturacion2015.facturas.`impRecargo`,
+	facturacion2015.facturas.`clienteId`,
+	facturacion2015.facturas.`porcRecargoEquivalencia`,
+	facturacion2015.facturas.`impIva`,
+	facturacion2015.facturas.id,
+	facturacion2015.facturas.numero,
+	facturacion2015.facturas.fecha
+FROM facturacion2015.facturas,  facturacion2015.clientes 
+WHERE 
+facturacion2015.clientes.id =  facturacion2015.facturas.`clienteId`
+AND
+	 facturacion2015.facturas.id = '1']]>
+	</queryString>
+	<field name="dirCorreo" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dirFactura" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="cobrada" class="java.lang.Boolean">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nombreCliente" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="nif" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="impTotal" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="dirEnvio" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="porcDescuento" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="impRecargo" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="clienteId" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="porcRecargoEquivalencia" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="impIva" class="java.lang.Double">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="id" class="java.lang.Long">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="numero" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="fecha" class="java.sql.Date">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="146" splitType="Stretch">
+			<image scaleImage="RealSize">
+				<reportElement x="-20" y="0" width="595" height="146" uuid="b9ee4487-e0f3-49a6-be96-e56f0d722e4a"/>
+				<imageExpression><![CDATA["C:/Users/Ignacio/git/facturacion2015/facturacion2015/informes/banner.png"]]></imageExpression>
+			</image>
+			<frame>
+				<reportElement x="350" y="6" width="205" height="129" uuid="33bf138e-dd8e-49d7-89a6-bc5f4d551bfc">
+					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+				</reportElement>
+				<textField>
+					<reportElement x="80" y="0" width="125" height="19" uuid="8ec4d291-3098-44e9-a604-d332e812affe">
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					</reportElement>
+					<textFieldExpression><![CDATA[$F{nombreCliente}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="80" height="20" uuid="663a64bc-cdd0-4c8f-a909-20095e8ad57b">
+						<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
+					</reportElement>
+					<text><![CDATA[CLIENTE]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="80" y="39" width="125" height="30" uuid="507a2fc4-ab0f-4d9f-9a9c-e419648aa53b"/>
+					<textFieldExpression><![CDATA[$F{dirFactura}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="39" width="80" height="30" uuid="7060c9e2-60c7-453f-8ac9-4204a7849118"/>
+					<text><![CDATA[DIRECCIÓN]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="80" y="69" width="125" height="20" uuid="e51345a5-a122-46c4-8d01-87393cad70a1"/>
+					<textFieldExpression><![CDATA[$F{numero}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="69" width="80" height="20" uuid="d43a5eed-6bae-40f5-8203-f22e4a264bd9"/>
+					<text><![CDATA[NUMERO]]></text>
+				</staticText>
+				<textField pattern="d MMMM, yyyy">
+					<reportElement x="80" y="89" width="125" height="20" uuid="f854a360-f5ca-4861-9fe5-bf9bb696dfe5"/>
+					<textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="89" width="80" height="21" uuid="7a4108a4-8ab0-4dc5-9c2d-c78fd4e0ecad"/>
+					<text><![CDATA[FECHA]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="0" y="109" width="80" height="20" uuid="7ebc6226-98e4-40b5-a270-55ad8e1aab14"/>
+					<text><![CDATA[DESCUENTO %]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="80" y="109" width="125" height="20" uuid="27850e2e-6af2-4436-aacd-bf266e349d0f"/>
+					<textFieldExpression><![CDATA[$F{porcDescuento}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="80" y="19" width="125" height="20" uuid="6ebfa520-7e5d-49c4-b906-b4cbc2a5d568"/>
+					<textFieldExpression><![CDATA[$F{nif}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="19" width="80" height="20" uuid="17aafd99-667b-432d-8d5f-e0ca135e7f55"/>
+					<text><![CDATA[NIF]]></text>
+				</staticText>
+			</frame>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -107,7 +107,7 @@ public class DlgInf_Prod extends JDialog {
 				String orden = "nombre";
 				orden = rdbtnNombre.isSelected()?"nombre":orden;
 				orden = rdbtnPrecio.isSelected()?"precio":orden;
-				orden = rdbtnPrecio.isSelected()?"iva":orden;
+				orden = rdbtnIva.isSelected()?"iva":orden;
 				retorno.put("orden", orden);
 				setVisible(false);
 			}

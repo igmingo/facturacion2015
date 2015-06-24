@@ -14,16 +14,18 @@ import java.awt.Rectangle;
 import javax.swing.UIManager;
 import java.awt.Color;
 import java.awt.GridLayout;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
-public class DlgInf_FacPorCliente extends JDialog {
+public class DlgInf_FacPorId extends JDialog {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	ClientesCombo cbClientes;
+	private FacturasTabla table;
 	
-	public DlgInf_FacPorCliente() {
+	public DlgInf_FacPorId() {
 		setBounds(new Rectangle(0, 0, 300, 125));
 		setModal(true);
 		setTitle("Informe de Facturas");
@@ -33,8 +35,11 @@ public class DlgInf_FacPorCliente extends JDialog {
 		getContentPane().add(panel, BorderLayout.CENTER);
 		panel.setLayout(new GridLayout(0, 1, 0, 0));
 		
-		cbClientes = new ClientesCombo();
-		panel.add(cbClientes);
+		JScrollPane scrollPane = new JScrollPane();
+		panel.add(scrollPane);
+		
+		table = new FacturasTabla(null);
+		scrollPane.setViewportView(table);
 		
 		JButton btnReturnParams = new JButton("Informe");
 		btnReturnParams.addActionListener(new ActionListener() {
@@ -49,7 +54,7 @@ public class DlgInf_FacPorCliente extends JDialog {
 	public Map<String, Object> mostrar() {
 		setVisible(true);
 		Map<String, Object> retorno = new HashMap<String, Object>();
-		retorno.put("clienteid", cbClientes.obtenerClienteIdSeleccionado());
+		retorno.put("clienteid", table);
 		
 		dispose();
 		return retorno;

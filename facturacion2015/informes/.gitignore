@@ -1,2 +1,7 @@
 /productos.jasper
 /rpt_facturascliente.jasper
+/rpt_productosprecio.jasper
+/rpt_productosprecioorden.jasper
+/rpt_facturasporcliente.jasper
+/rpt_facturaid.jasper
+/rpt_facturacompleta.jasper

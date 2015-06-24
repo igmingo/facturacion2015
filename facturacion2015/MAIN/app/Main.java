@@ -141,6 +141,14 @@ public class Main extends JFrame {
 		});
 		mnConsultas.add(mntmInfFacturas);
 		
+		JMenuItem mntmInFacturaPorId = new JMenuItem("Imprimir Factura");
+		mntmInFacturaPorId.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				abrirInforme("FacturaPorId");
+			}
+		});
+		mnConsultas.add(mntmInFacturaPorId);
+		
 		JMenuItem mntmInFacturasDeCliente = new JMenuItem("Informe de Facturas de Cliente");
 		mntmInFacturasDeCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -239,52 +247,7 @@ public class Main extends JFrame {
 	}
 
 	protected void abrirInforme(String string) {
-		String nameReport = "";
-		
-		Map<String, Object> parametros = null;
-		switch (string) {
-		case "FacturasDeCliente":
-			nameReport = "rpt_facturascliente.jasper";	
-			parametros = new DlgInf_FacPorCliente().mostrar();
-			break;
-		case "ProductosDesde":
-			nameReport = "rpt_productosprecio.jasper";
-			//"desdeprecio", "hastaprecio", "orden"
-			break;
-		case "Productos":
-			nameReport = "rpt_productos.jasper";
-			break;
-		case "Clientes":
-			nameReport = "rpt_clientes.jasper";
-			break;
-		case "Facturas":
-			nameReport = "rpt_facturas.jasper";
-			break;
-		default:
-			break;
-		}
-		
-		try {
-			JasperReport report;
-			JasperPrint reportRelleno;
-			JasperViewer reportVisor;
-
-			report = (JasperReport) JRLoader.loadObjectFromFile("./informes/" + nameReport);
-			Connection cnx = new Conexion().getConection();
-			System.out.println(parametros);
-			reportRelleno = JasperFillManager.fillReport(report, parametros, cnx);
-			try {
-				cnx.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			reportVisor = new JasperViewer(reportRelleno, false );
-			//Para que solo abra un viewReport
-			//reportVisor.viewReport(reportRelleno, false);
-			reportVisor.setVisible(true);
-		} catch (JRException e) {
-			e.printStackTrace();
-		}
+		boolean retorno = new CreadorDeInfomes(string).mostrar();
 	}
 
 	protected void mostrarPanel(String string) {

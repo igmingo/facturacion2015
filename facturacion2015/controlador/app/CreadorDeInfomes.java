@@ -20,7 +20,7 @@ public class CreadorDeInfomes {
 		Map<String, Object> parametros = null;
 		switch (string) {
 		case "FacturaPorId":
-			nameReport = "rpt_facturaporid.jasper";	
+			nameReport = "rpt_facturacompleta.jasper";	
 			parametros = new DlgInf_FacPorId().mostrar();
 			break;
 		case "FacturasDeCliente":
@@ -51,7 +51,7 @@ public class CreadorDeInfomes {
 			//JasperViewer reportVisor;
 			report = (JasperReport) JRLoader.loadObjectFromFile("./informes/" + nameReport);
 			Connection cnx = new Conexion().getConection();
-			System.out.println(parametros);
+			System.out.println("Parametros " + parametros);
 			reportRelleno = JasperFillManager.fillReport(report, parametros, cnx);
 			try {
 				cnx.close();

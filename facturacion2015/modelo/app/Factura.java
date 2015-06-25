@@ -8,6 +8,8 @@ public class Factura {
 	
 //	id int(10) UNSIGNED No auto_increment
 //	clienteId int(10) UNSIGNED No clientes -> id
+//	nombreCliente
+//	nifCliente
 //	numero int(11) No
 //	fecha date No
 //	porcDescuento double No
@@ -27,6 +29,7 @@ public class Factura {
      private int clienteId;
      private Cliente cliente;
      private String nombreCliente;
+     private String nifCliente;
      private int numero;
      private Date fecha;
      private double porcDescuento;
@@ -43,7 +46,7 @@ public class Factura {
     public Factura() {
     }
     
-    public Factura(int id, Cliente cliente, String nombreCliente, int numero,
+    public Factura(int id, Cliente cliente, String nombreCliente, String nifCliente, int numero,
 			Date fecha, double porcDescuento, double porcRecargoEquivalencia,
 			double impTotal, double impRecargo, double impIva,
 			String dirCorreo, String dirFactura, String dirEnvio,
@@ -68,7 +71,7 @@ public class Factura {
 		this.detalles = detalles;
 	}
 	
-    public Factura(int id, int clienteId, String nombreCliente, int numero,
+    public Factura(int id, int clienteId, String nombreCliente, String nifCliente, int numero,
 			Date fecha, double porcDescuento, double porcRecargoEquivalencia,
 			double impTotal, double impRecargo, double impIva,
 			String dirCorreo, String dirFactura, String dirEnvio,
@@ -223,6 +226,14 @@ public class Factura {
 
 	public void setCliente(Cliente cliente) {
 		this.cliente = cliente;
+	}
+	
+	public String getNifCliente() {
+		return nifCliente;
+	}
+
+	public void setNifCliente(String nifCliente) {
+		this.nifCliente = nifCliente;
 	}
 
 	@Override

@@ -16,6 +16,7 @@ import java.awt.Color;
 import java.awt.GridLayout;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 
 public class DlgInf_FacPorId extends JDialog {
 	
@@ -24,24 +25,35 @@ public class DlgInf_FacPorId extends JDialog {
 	 */
 	private static final long serialVersionUID = 1L;
 	private FacturasTabla table;
+	private JTextField txtFiltro;
 	
 	public DlgInf_FacPorId() {
-		setBounds(new Rectangle(0, 0, 300, 125));
+		setBounds(new Rectangle(0, 0, 400, 300));
 		setModal(true);
 		setTitle("Informe de Facturas");
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Cliente", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
 		getContentPane().add(panel, BorderLayout.CENTER);
-		panel.setLayout(new GridLayout(0, 1, 0, 0));
+		panel.setLayout(new BorderLayout(0, 0));
 		
 		JScrollPane scrollPane = new JScrollPane();
 		panel.add(scrollPane);
 		
 		table = new FacturasTabla(null);
 		scrollPane.setViewportView(table);
+		table.actualizarTabla(null);
 		
-		JButton btnReturnParams = new JButton("Informe");
+		txtFiltro = new JTextField();
+		txtFiltro.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				table.actualizarTabla(txtFiltro.getText());
+			}
+		});
+		panel.add(txtFiltro, BorderLayout.NORTH);
+		txtFiltro.setColumns(10);
+		
+		JButton btnReturnParams = new JButton("Crear factura para imprimir");
 		btnReturnParams.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				setVisible(false);
@@ -54,8 +66,7 @@ public class DlgInf_FacPorId extends JDialog {
 	public Map<String, Object> mostrar() {
 		setVisible(true);
 		Map<String, Object> retorno = new HashMap<String, Object>();
-		retorno.put("clienteid", table);
-		
+		retorno.put("facturaid", table.obtenerFacturaId());
 		dispose();
 		return retorno;
 	}

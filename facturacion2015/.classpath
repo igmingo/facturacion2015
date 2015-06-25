@@ -7,17 +7,17 @@
 	<classpathentry kind="src" path="MAIN"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="lib" path="forms-1.3.0.jar"/>
-	<classpathentry kind="lib" path="jcalendar-1.4.jar"/>
-	<classpathentry kind="lib" path="mysql-connector-java-5.1.35-bin.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ignacio/Google Drive/jar/Librerias Jasper/commons-beanutils-core-1.8.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ignacio/Google Drive/jar/Librerias Jasper/commons-digester-1.7.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ignacio/Google Drive/jar/Librerias Jasper/commons-javaflow.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ignacio/Google Drive/jar/Librerias Jasper/commons-logging-1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ignacio/Google Drive/jar/Librerias Jasper/groovy-all-1.8.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ignacio/Google Drive/jar/Librerias Jasper/itext-2.1.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ignacio/Google Drive/jar/Librerias Jasper/jasperreports-5.5.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ignacio/Google Drive/jar/Librerias Jasper/javax.servlet.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Ignacio/Google Drive/jar/Librerias Jasper/org.apache.commons.collections.jar"/>
+	<classpathentry kind="lib" path="jar/commons-beanutils-core-1.8.0.jar"/>
+	<classpathentry kind="lib" path="jar/commons-digester-1.7.jar"/>
+	<classpathentry kind="lib" path="jar/commons-javaflow.jar"/>
+	<classpathentry kind="lib" path="jar/commons-logging-1.1.jar"/>
+	<classpathentry kind="lib" path="jar/forms-1.3.0.jar"/>
+	<classpathentry kind="lib" path="jar/groovy-all-1.8.0.jar"/>
+	<classpathentry kind="lib" path="jar/itext-2.1.0.jar"/>
+	<classpathentry kind="lib" path="jar/jasperreports-5.5.0.jar"/>
+	<classpathentry kind="lib" path="jar/javax.servlet.jar"/>
+	<classpathentry kind="lib" path="jar/jcalendar-1.4.jar"/>
+	<classpathentry kind="lib" path="jar/mysql-connector-java-5.1.35-bin.jar"/>
+	<classpathentry kind="lib" path="jar/org.apache.commons.collections.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

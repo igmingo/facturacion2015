@@ -30,7 +30,9 @@ import java.util.Date;
 
 import com.toedter.calendar.JDateChooser;
 import com.jgoodies.forms.layout.Sizes;
+
 import javax.swing.border.LineBorder;
+
 import java.awt.Color;
 
 // TABLA facturas BASE DE DATOS
@@ -191,6 +193,7 @@ public class FacturaCompletaDialogo extends JDialog {
 		pnDatosCliente.add(lblNif, "3, 1, left, center");
 		
 		txtNif = new JTextField();
+		txtNif.setEditable(false);
 		txtNif.setText("NIF");
 		pnDatosCliente.add(txtNif, "5, 1, fill, fill");
 		txtNif.setColumns(5);
@@ -429,10 +432,7 @@ public class FacturaCompletaDialogo extends JDialog {
 			txtNumero.setText(""+ factura.getNumero());
 			dateFecha.setDate(factura.getFecha());
 			cbCliente.ponerClienteIdSeleccionado(factura.getClienteId());
-			try {
-				txtNif.setText(factura.getCliente().getNif());
-			} catch (Exception e) {
-			}
+			txtNif.setText(factura.getNifCliente());
 			pnProductos.ponerListaDetalles(factura.getDetalles());
 			numPorcDescuento.setValue(factura.getPorcDescuento());
 			numPorcRecargoequivalencia.setValue(factura.getPorcRecargoEquivalencia());
@@ -470,6 +470,7 @@ public class FacturaCompletaDialogo extends JDialog {
 		int id = factura.getId();
 		//Integer id = Utilidades.validarEntero(txtId.getText().trim());
 		String nombreCliente = cbCliente.obtenerNombreCliente();
+		String nifCliente = cbCliente.obtenerClienteSeleccionado().getNif();
 		Cliente cliente = cbCliente.obtenerClienteSeleccionado();
 		Integer numero = Utilidades.validarEntero(txtNumero.getText().trim());
 		Date fecha = dateFecha.getDate();
@@ -485,7 +486,7 @@ public class FacturaCompletaDialogo extends JDialog {
 		ArrayList<Detalle> detalles = pnProductos.recuperarListaDetalles();
 		//ArrayList<FacturaDetalle> detalles = tbFacturaDetalles.getListaDetalles();
 		try {
-			fac = new Factura(id, cliente, nombreCliente, numero, fecha, porcDescuento, porcRecargoEquivalencia, impTotal, impRecargo, impIva, dirCorreo, dirFactura, dirEnvio, cobrada, detalles);
+			fac = new Factura(id, cliente, nombreCliente, nifCliente, numero, fecha, porcDescuento, porcRecargoEquivalencia, impTotal, impRecargo, impIva, dirCorreo, dirFactura, dirEnvio, cobrada, detalles);
 		} catch (Exception e) {
 			mostrarMensaje("Error de formulario");
 		}

@@ -9,10 +9,14 @@ import java.util.Vector;
 
 import javax.sql.rowset.CachedRowSet;
 
+//SQL para obtener el nombre: CONCAT(cli.apellidos, CONCAT(',', cli.nombre))
+
 public class FacturasBDD extends BDD {
 	// TABLA facturas BASE DE DATOS
 	// id int(10) UNSIGNED No auto_increment
 	// clienteId int(10) UNSIGNED No clientes -> id
+	// nombreCliente
+	// nifCliente
 	// numero int(11) No
 	// fecha date No
 	// porcDescuento double No
@@ -38,7 +42,7 @@ public class FacturasBDD extends BDD {
 		try {
 			lista = new ArrayList<>();
 			while (rs.next() == true) {
-				lista.add(new Factura(rs.getInt("id"), rs.getInt("clienteId"), rs.getString("nombreCliente"), rs.getInt("numero"), rs.getDate("fecha"),
+				lista.add(new Factura(rs.getInt("id"), rs.getInt("clienteId"), rs.getString("nombreCliente"), rs.getString("nifCliente"), rs.getInt("numero"), rs.getDate("fecha"),
 						rs.getDouble("porcDescuento"), rs.getDouble("porcRecargoEquivalencia"),
 						rs.getDouble("impTotal"), rs.getDouble("impRecargo"), rs.getDouble("impIva"),
 						rs.getString("dirCorreo"), rs.getString("dirFactura"), rs.getString("dirEnvio"),
@@ -250,6 +254,7 @@ public class FacturasBDD extends BDD {
 								"INSERT INTO facturas SET "
 								+ "facturas.clienteId = " + fac.getClienteId() + ", "
 								+ "facturas.nombreCliente = '" + fac.getNombreCliente() + "', "
+								+ "facturas.nifCliente = '" + fac.getNifCliente() + "', "
 								+ "facturas.numero = " + fac.getNumero() + ", "
 								+ "facturas.fecha = '" + Utilidades.fechaToSQL(fac.getFecha()) + "', "
 								+ "facturas.porcDescuento = " + fac.getPorcDescuento() + ", "
@@ -276,6 +281,7 @@ public class FacturasBDD extends BDD {
 								"UPDATE facturas SET "
 								+ "facturas.clienteId = " + fac.getClienteId() + ", "
 								+ "facturas.nombreCliente = '" + fac.getNombreCliente() + "', "
+								+ "facturas.nifCliente = '" + fac.getNifCliente() + "', "
 								+ "facturas.numero = " + fac.getNumero() + ", "
 								+ "facturas.fecha = '" + Utilidades.fechaToSQL(fac.getFecha()) + "', "
 								+ "facturas.porcDescuento = " + fac.getPorcDescuento() + ", "
@@ -337,96 +343,98 @@ public class FacturasBDD extends BDD {
 		return respuesta;
 	}
 
-	public int grabarFacturaSimple(Factura fac) {
-		int respuesta = -1;
-		String sql = "";
-		if (fac.getId() == 0) {
-
-			// id int(10) UNSIGNED No auto_increment
-			// clienteId int(10) UNSIGNED No clientes -> id
-			// nombreCliente
-			// numero int(11) No
-			// fecha date No
-			// porcDescuento double No
-			// porcRecargoEquivalencia double No
-			// impTotal double No
-			// impRecargo double No
-			// impIva double No
-			// dirCorreo mediumtext No
-			// dirFactura mediumtext No
-			// dirEnvio mediumtext No
-			// cobrada tinyint(1) No
-
-			sql = "INSERT INTO facturas SET " + "facturas.clienteId = "
-					+ fac.getClienteId() + ", " + "facturas.nombreCliente = "
-					+ fac.getNombreCliente() + ", " + "facturas.numero = "
-					+ fac.getNumero() + ", " + "facturas.fecha = '"
-					+ Utilidades.fechaToSQL(fac.getFecha()) + "', "
-					+ "facturas.porcDescuento = " + fac.getPorcDescuento()
-					+ ", " + "facturas.porcRecargoEquivalencia = "
-					+ fac.getPorcRecargoEquivalencia() + ", "
-					+ "facturas.impTotal = " + fac.getImpTotal() + ", "
-					+ "facturas.impRecargo = " + fac.getImpRecargo() + ", "
-					+ "facturas.impIva = " + fac.getImpIva() + ", "
-					+ "facturas.dirCorreo = '" + fac.getDirCorreo() + "', "
-					+ "facturas.dirFactura = '" + fac.getDirFactura() + "', "
-					+ "facturas.dirEnvio = '" + fac.getDirEnvio() + "', "
-					+ "facturas.cobrada = " + fac.isCobrada();
-		} else {
-			sql = "UPDATE facturas SET " + "facturas.clienteId = "
-					+ fac.getClienteId() + ", " + "facturas.nombreCliente = "
-					+ fac.getNombreCliente() + ", " + "facturas.numero = "
-					+ fac.getNumero() + ", " + "facturas.fecha = '"
-					+ Utilidades.fechaToSQL(fac.getFecha()) + "', "
-					+ "facturas.porcDescuento = " + fac.getPorcDescuento()
-					+ ", " + "facturas.porcRecargoEquivalencia = "
-					+ fac.getPorcRecargoEquivalencia() + ", "
-					+ "facturas.impTotal = " + fac.getImpTotal() + ", "
-					+ "facturas.impRecargo = " + fac.getImpRecargo() + ", "
-					+ "facturas.impIva = " + fac.getImpIva() + ", "
-					+ "facturas.dirCorreo = '" + fac.getDirCorreo() + "', "
-					+ "facturas.dirFactura = '" + fac.getDirFactura() + "', "
-					+ "facturas.dirEnvio = '" + fac.getDirEnvio() + "', "
-					+ "facturas.cobrada = " + fac.isCobrada() + " "
-					+ "WHERE facturas.id = " + fac.getId();
-		}
-		System.out.println(sql);
-		// CREO UNA CONEXION
-		Connection c = new Conexion().getConection();
-		// SI LA CONEXION ES VALIDA
-		if (c != null) {
-			// INTENTA REALIZAR EL SQL
-			try {
-				// Crea un ESTAMENTO (comando de ejecucion de un sql)
-				Statement comando = c.createStatement();
-				comando.execute(sql, Statement.RETURN_GENERATED_KEYS);
-				// COMPRUEBA si estamos en un Insert o en un Update
-				if (fac.getId() != 0) {
-					// ES UN UPDATE
-					respuesta = comando.getUpdateCount() > 0 ? 0 : -1;
-				} else {
-					// VAMOS A DEVOLVER EL ID GENERADO, pero el EXECUTE devuelve
-					// un RESULTSET
-					ResultSet resultados = comando.getGeneratedKeys();
-					// Si el conjunto de resultados no es nulo, y coge el
-					// proximo elemento (el primero)
-					if (resultados != null && resultados.next()) {
-						respuesta = resultados.getInt(1);
-					}
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			// CERRAMOS LA CONEXION
-			try {
-				c.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
-		return respuesta;
-	}
+//	public int grabarFacturaSimple(Factura fac) {
+//		int respuesta = -1;
+//		String sql = "";
+//		if (fac.getId() == 0) {
+//
+//			// id int(10) UNSIGNED No auto_increment
+//			// clienteId int(10) UNSIGNED No clientes -> id
+//			// nombreCliente
+//			// numero int(11) No
+//			// fecha date No
+//			// porcDescuento double No
+//			// porcRecargoEquivalencia double No
+//			// impTotal double No
+//			// impRecargo double No
+//			// impIva double No
+//			// dirCorreo mediumtext No
+//			// dirFactura mediumtext No
+//			// dirEnvio mediumtext No
+//			// cobrada tinyint(1) No
+//
+//			sql = "INSERT INTO facturas SET " + "facturas.clienteId = "
+//					+ fac.getClienteId() + ", " + "facturas.nombreCliente = "
+//					+ fac.getNombreCliente() + ", " + "facturas.nifCliente = "
+//					+ fac.getNifCliente() + ", " + "facturas.numero = "
+//					+ fac.getNumero() + ", " + "facturas.fecha = '"
+//					+ Utilidades.fechaToSQL(fac.getFecha()) + "', "
+//					+ "facturas.porcDescuento = " + fac.getPorcDescuento()
+//					+ ", " + "facturas.porcRecargoEquivalencia = "
+//					+ fac.getPorcRecargoEquivalencia() + ", "
+//					+ "facturas.impTotal = " + fac.getImpTotal() + ", "
+//					+ "facturas.impRecargo = " + fac.getImpRecargo() + ", "
+//					+ "facturas.impIva = " + fac.getImpIva() + ", "
+//					+ "facturas.dirCorreo = '" + fac.getDirCorreo() + "', "
+//					+ "facturas.dirFactura = '" + fac.getDirFactura() + "', "
+//					+ "facturas.dirEnvio = '" + fac.getDirEnvio() + "', "
+//					+ "facturas.cobrada = " + fac.isCobrada();
+//		} else {
+//			sql = "UPDATE facturas SET " + "facturas.clienteId = "
+//					+ fac.getClienteId() + ", " + "facturas.nombreCliente = "
+//					+ fac.getNombreCliente() + ", " + "facturas.nifCliente = "
+//					+ fac.getNifCliente() + ", " + "facturas.numero = "
+//					+ fac.getNumero() + ", " + "facturas.fecha = '"
+//					+ Utilidades.fechaToSQL(fac.getFecha()) + "', "
+//					+ "facturas.porcDescuento = " + fac.getPorcDescuento()
+//					+ ", " + "facturas.porcRecargoEquivalencia = "
+//					+ fac.getPorcRecargoEquivalencia() + ", "
+//					+ "facturas.impTotal = " + fac.getImpTotal() + ", "
+//					+ "facturas.impRecargo = " + fac.getImpRecargo() + ", "
+//					+ "facturas.impIva = " + fac.getImpIva() + ", "
+//					+ "facturas.dirCorreo = '" + fac.getDirCorreo() + "', "
+//					+ "facturas.dirFactura = '" + fac.getDirFactura() + "', "
+//					+ "facturas.dirEnvio = '" + fac.getDirEnvio() + "', "
+//					+ "facturas.cobrada = " + fac.isCobrada() + " "
+//					+ "WHERE facturas.id = " + fac.getId();
+//		}
+//		System.out.println(sql);
+//		// CREO UNA CONEXION
+//		Connection c = new Conexion().getConection();
+//		// SI LA CONEXION ES VALIDA
+//		if (c != null) {
+//			// INTENTA REALIZAR EL SQL
+//			try {
+//				// Crea un ESTAMENTO (comando de ejecucion de un sql)
+//				Statement comando = c.createStatement();
+//				comando.execute(sql, Statement.RETURN_GENERATED_KEYS);
+//				// COMPRUEBA si estamos en un Insert o en un Update
+//				if (fac.getId() != 0) {
+//					// ES UN UPDATE
+//					respuesta = comando.getUpdateCount() > 0 ? 0 : -1;
+//				} else {
+//					// VAMOS A DEVOLVER EL ID GENERADO, pero el EXECUTE devuelve
+//					// un RESULTSET
+//					ResultSet resultados = comando.getGeneratedKeys();
+//					// Si el conjunto de resultados no es nulo, y coge el
+//					// proximo elemento (el primero)
+//					if (resultados != null && resultados.next()) {
+//						respuesta = resultados.getInt(1);
+//					}
+//				}
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			}
+//			// CERRAMOS LA CONEXION
+//			try {
+//				c.close();
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//
+//		return respuesta;
+//	}
 
 	public boolean eliminar(int id) {
 		boolean respuesta = false;
@@ -466,10 +474,14 @@ public class FacturasBDD extends BDD {
 	 */
 	public ArrayList<Vector<Object>> recuperaTablaFacturas(String txtFiltro) {
 		ArrayList<Vector<Object>> tableData = null;
-		ArrayList<String> filtros = new ArrayList<>();
-		filtros.add("facturas.numero LIKE '%" + txtFiltro + "%'");
-		filtros.add("facturas.nombreCliente LIKE '%" + txtFiltro + "%'");
-		String filtro = Utilidades.creaFiltroOR(filtros);
+		
+		String filtro = null;
+		if (txtFiltro!=null) {
+			ArrayList<String> filtros = new ArrayList<>();
+			filtros.add("facturas.numero LIKE '%" + txtFiltro + "%'");
+			filtros.add("facturas.nombreCliente LIKE '%" + txtFiltro + "%'");
+			filtro = Utilidades.creaFiltroOR(filtros);
+		}
 		ArrayList<Factura> lista = recuperaPorFiltro(filtro);
 		tableData = new ArrayList<>();
 		for (Factura factura : lista) {

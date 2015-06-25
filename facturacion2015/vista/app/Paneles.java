@@ -7,8 +7,12 @@ import javax.swing.JButton;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import javax.swing.border.TitledBorder;
 import javax.swing.UIManager;
+
 import java.awt.Color;
 
 public class Paneles extends JPanel {
@@ -50,6 +54,21 @@ public class Paneles extends JPanel {
 			break;
 		case "Facturas":
 			tabla = new FacturasTabla(textFiltro.getText());
+			tabla.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+					int row = tabla.getSelectedRow();
+					if (row != -1) {
+						Factura fac = (Factura) tabla.getValueAt(row, 0);
+						FacturaCompletaDialogo dialog = new FacturaCompletaDialogo(fac);
+						Factura f = dialog.mostrar();
+						if (f != null) {
+							((FacturasTabla) tabla).actualizarTabla(textFiltro.getText());
+						}
+					}
+				}
+			});
+			
 			break;
 		default:
 			break;

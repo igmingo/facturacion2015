@@ -1,6 +1,4 @@
 package app;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
@@ -51,21 +49,7 @@ public class FacturasTabla extends JTable {
 		getColumnModel().getColumn(4).setMinWidth(60);
 		getColumnModel().getColumn(4).setMaxWidth(60);
 		setAutoCreateRowSorter(true);
-		
-		addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				int row = getSelectedRow();
-				if (row != -1) {
-					Factura fac = (Factura) getValueAt(row, 0);
-					FacturaCompletaDialogo dialog = new FacturaCompletaDialogo(fac);
-					Factura f = dialog.mostrar();
-					if (f != null) {
-						actualizarTabla(fil);
-					}
-				}
-			}
-		});
+		actualizarTabla(this.filtro);
 	}
 	
 	public void actualizarTabla(String filtro) {
@@ -86,6 +70,12 @@ public class FacturasTabla extends JTable {
 
 	public void setFiltro(String filtro) {
 		this.filtro = filtro;
+	}
+	
+	public int obtenerFacturaId(){
+		DefaultTableModel dtm = (DefaultTableModel) getModel();
+		Factura fac = (Factura) dtm.getValueAt(getSelectedRow(),0);
+		return fac.getId();
 	}
 
 }
